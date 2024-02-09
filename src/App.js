@@ -8,7 +8,7 @@ function App() {
   const [inCombat, setInCombat] = useState(false);
   const [isHeroTurn, setIsHeroTurn] = useState(true);
   const [hero, setHero] = useState({ name: "Nameless Warrior" });
-  const [foe, setFoe] = useState({});
+  const [foe, setFoe] = useState({ name: "Goblin", hp: 4, attackDie: 3 });
 
   function handleSubmitName(e) {
     e.preventDefault();
@@ -26,8 +26,8 @@ function App() {
   function handleEmbark(e) {
     setInCombat(true);
     e.preventDefault();
-    setFoe({ ...foe, name: "Goblin", hp: 4, attackDie: 3 });
-    setStatusMessage(`You enounter a ${foe.name}.`);
+    console.log(JSON.stringify(foe));
+    setStatusMessage(`You encounter a ${foe.name}.`);
   }
 
   function handleAttack(e) {
