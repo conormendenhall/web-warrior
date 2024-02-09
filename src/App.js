@@ -3,44 +3,87 @@ import { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [warriorName, setWarriorName] = useState("Nameless Warrior");
-  const [status, setStatus] = useState("unsubmitted");
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    setStatus("submitted");
-  }
-  function handleChange(e) {
-    setWarriorName(e.target.value);
-  }
-
-  const [hero, setHero] = useState({});
+  const [statusMessage, setStatusMessage] = useState("What is your name?");
+  const [heroNamed, setHeroNamed] = useState(false);
+  const [inCombat, setInCombat] = useState(false);
+  const [isHeroTurn, setIsHeroTurn] = useState(true);
+  const [hero, setHero] = useState({ name: "Nameless Warrior" });
   const [foe, setFoe] = useState({});
 
-  let welcome = "What is your name?";
-  if (status === "submitted") {
-    welcome = `Well met, ${warriorName}.`;
-    hero.name = warriorName;
+  function handleSubmitName(e) {
+    e.preventDefault();
+    setHeroNamed(true);
+    setStatusMessage(`Well met, ${hero.name}.`);
     hero.hp = 5;
     hero.attackDie = 5;
+    hero.felledFoes = 0;
+  }
 
-    foe.name = "Goblin";
-    foe.hp = 4;
-    foe.attackDie = 3;
+  function handleChangeName(e) {
+    hero.name = e.target.value;
+  }
+
+  function handleEmbark(e) {
+    setInCombat(true);
+    e.preventDefault();
+    setFoe({ ...foe, name: "Goblin", hp: 4, attackDie: 3 });
+    setStatusMessage(`You enounter a ${foe.name}.`);
+  }
+
+  function handleAttack(e) {
+    e.preventDefault();
+
+    if (foe === null) return;
+
+    const attackDamage = rollDie(hero.attackDie);
+    foe.hp -= attackDamage;
+
+    if (foe.hp > 0) {
+      setFoe({ ...foe, hp: foe.hp });
+      setStatusMessage(
+        `You strike the ${foe.name} for ${attackDamage} damage.`
+      );
+    } else {
+      setFoe({ name: "Goblin", hp: 4, attackDie: 3 });
+      hero.felledFoes++;
+      setHero({ ...hero, felledFoes: hero.felledFoes });
+      setStatusMessage(
+        `You deal ${attackDamage} damage, and the ${foe.name} falls dead at your feet.`
+      );
+      setInCombat(false);
+    }
+  }
+
+  function rollDie(sides) {
+    return Math.floor(Math.random() * sides) + 1;
   }
 
   return (
     <div className="App">
       <header className="App-header">
-        <p>{welcome}</p>
-        {status !== "submitted" && (
-          <form onSubmit={handleSubmit}>
-            <input value={warriorName} onChange={handleChange} />
-            <button disabled={warriorName.length === 0}>Submit</button>
+        <div>Hero: {JSON.stringify(hero)}</div>
+        <div>{hero.name}</div>
+        <div>HP {hero.hp}</div>
+        <div>Attack {hero.attackDie}</div>
+        <p>{statusMessage}</p>
+        {!heroNamed && (
+          <form onSubmit={handleSubmitName}>
+            <input
+              defaultValue="Nameless Warrior"
+              onChange={handleChangeName}
+            />
+            <button disabled={hero.name.length === 0}>Submit</button>
           </form>
         )}
-        <div>Hero: {JSON.stringify(hero)}</div>
-        <div>Foe: {JSON.stringify(foe)}</div>
+        {heroNamed && !inCombat && (
+          <button onClick={handleEmbark}>Embark</button>
+        )}
+        {inCombat && isHeroTurn && (
+          <>
+            <div>Foe: {JSON.stringify(foe)}</div>
+            <button onClick={handleAttack}>Attack</button>
+          </>
+        )}
       </header>
     </div>
   );
