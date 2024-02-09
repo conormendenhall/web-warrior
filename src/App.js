@@ -35,20 +35,24 @@ function App() {
 
     if (foe === null) return;
 
-    const attackDamage = rollDie(hero.attackDie);
-    foe.hp -= attackDamage;
+    const heroAtkDmg = rollDie(hero.attackDie);
+    foe.hp -= heroAtkDmg;
 
     if (foe.hp > 0) {
       setFoe({ ...foe, hp: foe.hp });
+      const foeAtkDmg = rollDie(foe.attackDie);
       setStatusMessage(
-        `You strike the ${foe.name} for ${attackDamage} damage.`
+        `You strike the ${foe.name} for ${heroAtkDmg} damage. ` +
+          `The ${foe.name} still stands, sneering at you. ` +
+          `The ${foe.name} attacks for ${foeAtkDmg} damage.`
       );
+      setHero({...hero, hp: hero.hp - foeAtkDmg})
     } else {
       setFoe({ name: "Goblin", hp: 4, attackDie: 3 });
       hero.felledFoes++;
       setHero({ ...hero, felledFoes: hero.felledFoes });
       setStatusMessage(
-        `You deal ${attackDamage} damage, and the ${foe.name} falls dead at your feet.`
+        `You deal ${heroAtkDmg} damage, and the ${foe.name} falls dead at your feet.`
       );
       setInCombat(false);
     }
