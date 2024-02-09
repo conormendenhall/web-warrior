@@ -4,19 +4,28 @@ import "./App.css";
 
 function App() {
   const [statusMessage, setStatusMessage] = useState("What is your name?");
-  const [heroNamed, setHeroNamed] = useState(false);
+  const [named, setNamed] = useState(false);
   const [inCombat, setInCombat] = useState(false);
-  const [isHeroTurn, setIsHeroTurn] = useState(true);
-  const [hero, setHero] = useState({ name: "Nameless Warrior" });
-  const [foe, setFoe] = useState({ name: "Goblin", hp: 4, attackDie: 3 });
+  const freshHero = {
+    name: "Nameless Warrior",
+    hp: 5,
+    maxHP: 5,
+    attackDie: 5,
+    felledFoes: 0,
+    isRested: true,
+  };
+  const [hero, setHero] = useState(freshHero);
+  const [foe, setFoe] = useState({ name: "Goblin", hp: 4, attackDie: 5 });
+  const [dead, setDead] = useState(false);
+
+  function rollDie(sides) {
+    return Math.floor(Math.random() * sides) + 1;
+  }
 
   function handleSubmitName(e) {
     e.preventDefault();
-    setHeroNamed(true);
+    setNamed(true);
     setStatusMessage(`Well met, ${hero.name}.`);
-    hero.hp = 5;
-    hero.attackDie = 5;
-    hero.felledFoes = 0;
   }
 
   function handleChangeName(e) {
@@ -26,7 +35,6 @@ function App() {
   function handleEmbark(e) {
     setInCombat(true);
     e.preventDefault();
-    console.log(JSON.stringify(foe));
     setStatusMessage(`You encounter a ${foe.name}.`);
   }
 
@@ -46,7 +54,15 @@ function App() {
           `The ${foe.name} still stands, sneering at you. ` +
           `The ${foe.name} attacks for ${foeAtkDmg} damage.`
       );
-      setHero({...hero, hp: hero.hp - foeAtkDmg})
+      if (hero.hp - foeAtkDmg > 0) {
+        setHero({ ...hero, hp: hero.hp - foeAtkDmg, isRested: false });
+      } else {
+        setDead(true);
+        setInCombat(false);
+        setStatusMessage(
+          `The ${foe.name} struck you down. Rest in Peace, ${hero.name}`
+        );
+      }
     } else {
       setFoe({ name: "Goblin", hp: 4, attackDie: 3 });
       hero.felledFoes++;
@@ -58,37 +74,57 @@ function App() {
     }
   }
 
-  function rollDie(sides) {
-    return Math.floor(Math.random() * sides) + 1;
+  function handleRest(e) {
+    e.preventDefault();
+    const restPoints = rollDie(4);
+    setHero({
+      ...hero,
+      hp: Math.min(hero.hp + restPoints, hero.maxHP),
+      isRested: true,
+    });
+    setStatusMessage(`You rest for ${restPoints} HP.`);
+  }
+
+  function handleResurrection(e) {
+    e.preventDefault();
+    setHero(freshHero);
+    setNamed(false);
+    setDead(false);
   }
 
   return (
     <div className="App">
-      <header className="App-header">
-        <div>Hero: {JSON.stringify(hero)}</div>
-        <div>{hero.name}</div>
-        <div>HP {hero.hp}</div>
-        <div>Attack {hero.attackDie}</div>
-        <p>{statusMessage}</p>
-        {!heroNamed && (
-          <form onSubmit={handleSubmitName}>
-            <input
-              defaultValue="Nameless Warrior"
-              onChange={handleChangeName}
-            />
-            <button disabled={hero.name.length === 0}>Submit</button>
-          </form>
-        )}
-        {heroNamed && !inCombat && (
-          <button onClick={handleEmbark}>Embark</button>
-        )}
-        {inCombat && isHeroTurn && (
-          <>
-            <div>Foe: {JSON.stringify(foe)}</div>
-            <button onClick={handleAttack}>Attack</button>
-          </>
-        )}
-      </header>
+      <pre>Hero: {JSON.stringify(hero, null, 2)}</pre>
+      <p className="status-message">{statusMessage}</p>
+      {!named && (
+        <form onSubmit={handleSubmitName}>
+          <input defaultValue="Nameless Warrior" onChange={handleChangeName} />
+          <button disabled={hero.name.length === 0}>Submit</button>
+        </form>
+      )}
+      {!dead && named && !inCombat && hero.isRested && (
+        <button onClick={handleEmbark} className="bottom">
+          Embark
+        </button>
+      )}
+      {!hero.isRested && !inCombat && (
+        <button onClick={handleRest} className="bottom">
+          Rest
+        </button>
+      )}
+      {inCombat && (
+        <>
+          <pre>Foe: {JSON.stringify(foe, null, 2)}</pre>
+          <button onClick={handleAttack} className="bottom">
+            Attack
+          </button>
+        </>
+      )}
+      {dead && (
+        <button onClick={handleResurrection} className="bottom">
+          Rise again
+        </button>
+      )}
     </div>
   );
 }
