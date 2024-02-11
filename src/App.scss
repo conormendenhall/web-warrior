@@ -1,0 +1,75 @@
+$color-dark: #282c34;
+$color-light: hsl(29, 40%, 85%);
+$color-primary: hsl(29, 56%, 70%);
+$radius: 0.25em;
+$font-size-sm: calc(8px + 2vmin);
+$font-size-md: calc(10px + 2vmin);
+$font-size-lg: calc(12px + 2vmin);
+
+.App {
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  height: calc(100vh - 2em);
+  font-size: $font-size-md;
+  background-color: $color-dark;
+  color: $color-light;
+}
+
+pre {
+  font-size: $font-size-sm;
+  color: $color-primary;
+}
+
+.character-sheet {
+  padding: 0.5em;
+  border-radius: $radius;
+  background-color: $color-light;
+  color: $color-dark;
+  font-size: $font-size-sm;
+
+  .character-header {
+    display: flex;
+    justify-content: space-between;
+
+    .hero-name {
+      font-size: $font-size-lg;
+    }
+  }
+
+  .health {
+    display: flex;
+    flex-direction: row;
+
+    .health-count {
+      margin-right: 0.5em;
+    }
+
+    .health-bar {
+      flex-grow: 2;
+      height: 1em;
+      border-radius: $radius;
+      background-color: firebrick;
+
+      .hp {
+        height: 1em;
+        border-radius: $radius;
+        background-color: forestgreen;
+      }
+    }
+  }
+}
+
+.status-message {
+  font-size: $font-size-lg;
+  font-weight: 700;
+}
+
+button.bottom {
+  flex-grow: 2;
+  margin-top: auto;
+  width: 100%;
+  max-height: 50px;
+  margin-top: auto;
+  font-size: 20px;
+}
