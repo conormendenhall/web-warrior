@@ -113,30 +113,32 @@ function App() {
   return (
     <div className="App">
       <pre>Hero: {JSON.stringify(hero, null, 2)}</pre>
-      <div className="character-sheet">
-        <div className="character-header">
-          <div className="hero-name">{hero.name}</div>
-          <div className="level-box">
-            <div>Level {hero.level}</div>
-            <div>
-              {hero.xp} / {hero.levelXP} XP
+      {named && (
+        <div className="character-sheet">
+          <div className="character-header">
+            <div className="hero-name">{hero.name}</div>
+            <div className="level-box">
+              <div>Level {hero.level}</div>
+              <div>
+                {hero.xp} / {hero.levelXP} XP
+              </div>
             </div>
           </div>
-        </div>
-        <div className="health">
-          <div className="health-count">
-            {hero.hp} / {hero.maxHP} HP
+          <div className="health">
+            <div className="health-count">
+              {hero.hp} / {hero.maxHP} HP
+            </div>
+            <div className="health-bar">
+              <div
+                className="hp"
+                style={{ width: (hero.hp / hero.maxHP) * 100 + "%" }}
+              ></div>
+            </div>
           </div>
-          <div className="health-bar">
-            <div
-              className="hp"
-              style={{ width: (hero.hp / hero.maxHP) * 100 + "%" }}
-            ></div>
-          </div>
+          <div>Attack: d{hero.attackDie}</div>
+          <div>{hero.felledFoes} foes felled</div>
         </div>
-        <div>Attack: d{hero.attackDie}</div>
-        <div>{hero.felledFoes} foes felled</div>
-      </div>
+      )}
       <p className="status-message">{statusMessage}</p>
       {!named && (
         <form onSubmit={handleSubmitName}>

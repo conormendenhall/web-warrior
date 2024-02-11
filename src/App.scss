@@ -27,6 +27,7 @@ pre {
   background-color: $color-light;
   color: $color-dark;
   font-size: $font-size-sm;
+  max-width: calc(400px + 2vmin);
 
   .character-header {
     display: flex;
@@ -70,6 +71,5 @@ button.bottom {
   margin-top: auto;
   width: 100%;
   max-height: 50px;
-  margin-top: auto;
   font-size: 20px;
 }
