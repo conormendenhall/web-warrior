@@ -19,6 +19,7 @@ function App() {
   };
   const freshGoblin = {
     name: "Goblin",
+    level: 1,
     hp: 5,
     maxHP: 5,
     attackDie: 3,
@@ -48,10 +49,8 @@ function App() {
 
   function handleAttack() {
     if (foe === null) return;
-
     const heroAtkDmg = rollDie(hero.attackDie);
     foe.hp -= heroAtkDmg;
-
     if (foe.hp > 0) {
       setFoe({ ...foe });
       const foeAtkDmg = rollDie(foe.attackDie);
@@ -73,7 +72,6 @@ function App() {
       }
     } else {
       let victoryMessage = `You deal ${heroAtkDmg} damage, and the ${foe.name} falls dead at your feet.`;
-
       hero.felledFoes++;
       hero.xp += foe.maxHP + foe.attackDie;
       if (hero.xp > hero.levelXP) {
@@ -81,7 +79,6 @@ function App() {
         victoryMessage += ` ${hero.name} reached level ${hero.level}!`;
       }
       setStatusMessage(victoryMessage);
-
       setHero({ ...hero });
       setInCombat(false);
       setFoe(freshGoblin);
@@ -112,40 +109,44 @@ function App() {
 
   return (
     <div className="App">
-      <pre>Hero: {JSON.stringify(hero, null, 2)}</pre>
-      {named && (
-        <div className="character-sheet">
-          <div className="character-header">
-            <div className="hero-name">{hero.name}</div>
-            <div className="level-box">
-              <div>Level {hero.level}</div>
-              <div>
-                {hero.xp} / {hero.levelXP} XP
+      <div className="header">
+        {named && (
+          <div className="character-sheet">
+            <div className="character-header">
+              <div className="hero-name">{hero.name}</div>
+              <div className="level-box">
+                <div>Level {hero.level}</div>
+                <div>
+                  {hero.xp} / {hero.levelXP} XP
+                </div>
               </div>
             </div>
-          </div>
-          <div className="health">
-            <div className="health-count">
-              {hero.hp} / {hero.maxHP} HP
+            <div className="health">
+              <div className="health-count">
+                {hero.hp} / {hero.maxHP} HP
+              </div>
+              <div className="health-bar">
+                <div
+                  className="hp"
+                  style={{ width: (hero.hp / hero.maxHP) * 100 + "%" }}
+                ></div>
+              </div>
             </div>
-            <div className="health-bar">
-              <div
-                className="hp"
-                style={{ width: (hero.hp / hero.maxHP) * 100 + "%" }}
-              ></div>
-            </div>
+            <div>Attack: d{hero.attackDie}</div>
+            <div>{hero.felledFoes} foes felled</div>
           </div>
-          <div>Attack: d{hero.attackDie}</div>
-          <div>{hero.felledFoes} foes felled</div>
-        </div>
-      )}
-      <p className="status-message">{statusMessage}</p>
-      {!named && (
-        <form onSubmit={handleSubmitName}>
-          <input defaultValue="Nameless Warrior" onChange={handleChangeName} />
-          <button disabled={hero.name.length === 0}>Submit</button>
-        </form>
-      )}
+        )}
+        <p className="status-message">{statusMessage}</p>
+        {!named && (
+          <form onSubmit={handleSubmitName}>
+            <input
+              defaultValue="Nameless Warrior"
+              onChange={handleChangeName}
+            />
+            <button disabled={hero.name.length === 0}>Submit</button>
+          </form>
+        )}
+      </div>
       {!dead && named && !inCombat && hero.isRested && (
         <button onClick={handleEmbark} className="bottom">
           Embark
@@ -158,7 +159,26 @@ function App() {
       )}
       {inCombat && (
         <>
-          <pre>Foe: {JSON.stringify(foe, null, 2)}</pre>
+          <div className="character-sheet">
+            <div className="character-header">
+              <div className="hero-name">{foe.name}</div>
+              <div className="level-box">
+                <div>Level {foe.level}</div>
+              </div>
+            </div>
+            <div className="health">
+              <div className="health-count">
+                {foe.hp} / {foe.maxHP} HP
+              </div>
+              <div className="health-bar">
+                <div
+                  className="hp"
+                  style={{ width: (foe.hp / foe.maxHP) * 100 + "%" }}
+                ></div>
+              </div>
+            </div>
+            <div>Attack: d{foe.attackDie}</div>
+          </div>
           <button onClick={handleAttack} className="bottom">
             Attack
           </button>
