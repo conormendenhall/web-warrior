@@ -8,14 +8,23 @@ function App() {
   const [inCombat, setInCombat] = useState(false);
   const freshHero = {
     name: "Nameless Warrior",
+    level: 1,
+    xp: 0,
+    levelXP: 20,
     hp: 5,
     maxHP: 5,
     attackDie: 5,
     felledFoes: 0,
     isRested: true,
   };
+  const freshGoblin = {
+    name: "Goblin",
+    hp: 5,
+    maxHP: 5,
+    attackDie: 3,
+  };
   const [hero, setHero] = useState(freshHero);
-  const [foe, setFoe] = useState({ name: "Goblin", hp: 4, attackDie: 5 });
+  const [foe, setFoe] = useState(freshGoblin);
   const [dead, setDead] = useState(false);
 
   function rollDie(sides) {
@@ -32,22 +41,19 @@ function App() {
     hero.name = e.target.value;
   }
 
-  function handleEmbark(e) {
+  function handleEmbark() {
     setInCombat(true);
-    e.preventDefault();
     setStatusMessage(`You encounter a ${foe.name}.`);
   }
 
-  function handleAttack(e) {
-    e.preventDefault();
-
+  function handleAttack() {
     if (foe === null) return;
 
     const heroAtkDmg = rollDie(hero.attackDie);
     foe.hp -= heroAtkDmg;
 
     if (foe.hp > 0) {
-      setFoe({ ...foe, hp: foe.hp });
+      setFoe({ ...foe });
       const foeAtkDmg = rollDie(foe.attackDie);
       setStatusMessage(
         `You strike the ${foe.name} for ${heroAtkDmg} damage. ` +
@@ -55,7 +61,9 @@ function App() {
           `The ${foe.name} attacks for ${foeAtkDmg} damage.`
       );
       if (hero.hp - foeAtkDmg > 0) {
-        setHero({ ...hero, hp: hero.hp - foeAtkDmg, isRested: false });
+        hero.hp -= foeAtkDmg;
+        hero.isRested = false;
+        setHero({ ...hero });
       } else {
         setDead(true);
         setInCombat(false);
@@ -64,29 +72,39 @@ function App() {
         );
       }
     } else {
-      setFoe({ name: "Goblin", hp: 4, attackDie: 3 });
+      let victoryMessage = `You deal ${heroAtkDmg} damage, and the ${foe.name} falls dead at your feet.`;
+
       hero.felledFoes++;
-      setHero({ ...hero, felledFoes: hero.felledFoes });
-      setStatusMessage(
-        `You deal ${heroAtkDmg} damage, and the ${foe.name} falls dead at your feet.`
-      );
+      hero.xp += foe.maxHP + foe.attackDie;
+      if (hero.xp > hero.levelXP) {
+        levelUp(hero);
+        victoryMessage += ` ${hero.name} reached level ${hero.level}!`;
+      }
+      setStatusMessage(victoryMessage);
+
+      setHero({ ...hero });
       setInCombat(false);
+      setFoe(freshGoblin);
     }
   }
 
-  function handleRest(e) {
-    e.preventDefault();
+  function levelUp(hero) {
+    hero.xp -= hero.levelXP;
+    hero.levelXP += Math.floor(hero.levelXP / 5);
+    hero.maxHP += 3;
+    hero.hp = hero.maxHP;
+    return hero.level++;
+  }
+
+  function handleRest() {
     const restPoints = rollDie(4);
-    setHero({
-      ...hero,
-      hp: Math.min(hero.hp + restPoints, hero.maxHP),
-      isRested: true,
-    });
+    hero.hp = Math.min(hero.hp + restPoints, hero.maxHP);
+    hero.isRested = true;
+    setHero({ ...hero });
     setStatusMessage(`You rest for ${restPoints} HP.`);
   }
 
-  function handleResurrection(e) {
-    e.preventDefault();
+  function handleResurrection() {
     setHero(freshHero);
     setNamed(false);
     setDead(false);
@@ -107,7 +125,7 @@ function App() {
           Embark
         </button>
       )}
-      {!hero.isRested && !inCombat && (
+      {!hero.isRested && !inCombat && !dead && (
         <button onClick={handleRest} className="bottom">
           Rest
         </button>
