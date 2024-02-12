@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import "./App.scss";
+import { Health } from "./Health";
 import { MerchantInventory } from "./MerchantInventory";
 
 function App() {
@@ -131,17 +132,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="health">
-              <div className="health-count">
-                {hero.hp} / {hero.maxHP} HP
-              </div>
-              <div className="health-bar">
-                <div
-                  className="hp"
-                  style={{ width: (hero.hp / hero.maxHP) * 100 + "%" }}
-                ></div>
-              </div>
-            </div>
+            <Health hp={hero.hp} maxHP={hero.maxHP} />
             <div>Attack: d{hero.attackDie}</div>
             <div>{hero.gold} gold</div>
             <div>{hero.felledFoes} foes felled</div>
@@ -168,17 +159,7 @@ function App() {
               <div>Level {foe.level}</div>
             </div>
           </div>
-          <div className="health">
-            <div className="health-count">
-              {foe.hp} / {foe.maxHP} HP
-            </div>
-            <div className="health-bar">
-              <div
-                className="hp"
-                style={{ width: (foe.hp / foe.maxHP) * 100 + "%" }}
-              ></div>
-            </div>
-          </div>
+          <Health hp={foe.hp} maxHP={foe.maxHP} />
           <div>Attack: d{foe.attackDie}</div>
         </div>
       )}
