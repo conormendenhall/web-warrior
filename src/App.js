@@ -24,7 +24,7 @@ const App = () => {
     hp: 5,
     maxHP: 5,
     attackDie: 3,
-    getLoot: () => Math.floor(Math.random() * 8),
+    lootDie: 8,
   };
   const freshInventory = [
     { name: "Shield", price: 8 },
@@ -104,7 +104,7 @@ const App = () => {
       let victoryMessage = `You deal ${heroAtkDmg} damage, and the ${foe.name} falls dead at your feet.`;
       hero.felledFoes++;
       hero.xp += foe.maxHP + foe.attackDie;
-      hero.gold += foe.getLoot();
+      hero.gold += rollDie(foe.lootDie);
       if (hero.xp > hero.levelXP) {
         levelUp(hero);
         victoryMessage += ` ${hero.name} reached level ${hero.level}!`;
