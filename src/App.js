@@ -1,10 +1,11 @@
 import { useState } from "react";
 
 import "./App.scss";
+import { ActionButtons } from "./ActionButtons";
 import { CharacterSheet } from "./CharacterSheet";
 import { MerchantInventory } from "./MerchantInventory";
 
-function App() {
+const App = () => {
   const freshHero = {
     name: "Nameless Warrior",
     level: 1,
@@ -113,7 +114,7 @@ function App() {
   }
 
   function handleResurrection() {
-    setHero(freshHero);
+    setHero({ ...freshHero, name: hero.name });
     setNamed(false);
     setDead(false);
   }
@@ -137,35 +138,20 @@ function App() {
       </div>
       {inCombat && <CharacterSheet creature={foe} />}
       {trading && <MerchantInventory heroGold={hero.gold} />}
-      <div className="button-section">
-        {!dead && named && !inCombat && hero.isRested && (
-          <div className="button" onClick={handleEmbark}>
-            Embark
-          </div>
-        )}
-        {!dead && named && !inCombat && hero.isRested && !trading && (
-          <div className="button" onClick={handleTrade}>
-            Trade
-          </div>
-        )}
-        {!hero.isRested && !inCombat && !dead && (
-          <div className="button" onClick={handleRest}>
-            Rest
-          </div>
-        )}
-        {inCombat && (
-          <div className="button" onClick={handleAttack}>
-            Attack
-          </div>
-        )}
-        {dead && (
-          <div className="button" onClick={handleResurrection}>
-            Rise again
-          </div>
-        )}
-      </div>
+      <ActionButtons
+        dead={dead}
+        inCombat={inCombat}
+        isRested={hero.isRested}
+        named={named}
+        trading={trading}
+        handleResurrection={handleResurrection}
+        handleAttack={handleAttack}
+        handleEmbark={handleEmbark}
+        handleRest={handleRest}
+        handleTrade={handleTrade}
+      />
     </div>
   );
-}
+};
 
 export default App;
