@@ -26,10 +26,22 @@ const App = () => {
     attackDie: 3,
     getLoot: () => Math.floor(Math.random() * 8),
   };
+  const freshInventory = [
+    { name: "Shield", price: 8 },
+    { name: "Leather Armor", price: 10 },
+    { name: "Morning Star", price: 12 },
+    { name: "Chain Mail", price: 14 },
+    { name: "Claymore", price: 16 },
+    { name: "Scale Armor", price: 16 },
+    { name: "Lucerne", price: 18 },
+    { name: "Plate Armor", price: 20 },
+    { name: "Cloak of Invisibility", price: 40 },
+  ];
   const [statusMessage, setStatusMessage] = useState("What is your name?");
   const [named, setNamed] = useState(false);
   const [inCombat, setInCombat] = useState(false);
   const [trading, setTrading] = useState(false);
+  const [inventory, setInventory] = useState(freshInventory);
   const [hero, setHero] = useState(freshHero);
   const [foe, setFoe] = useState(freshGoblin);
   const [dead, setDead] = useState(false);
@@ -56,6 +68,15 @@ const App = () => {
 
   function handleTrade() {
     setTrading(true);
+    setStatusMessage("Hello, weary traveler. See anything you like?");
+  }
+
+  function handlePurchase(selection, price) {
+    if (hero.gold >= price) {
+      setHero({ ...hero, gold: (hero.gold -= price) });
+      setInventory(inventory.filter((item) => item.name !== selection));
+      setStatusMessage(`Ahh, the ${selection}. Good choice.`);
+    }
   }
 
   function handleAttack() {
@@ -135,9 +156,15 @@ const App = () => {
             </button>
           </form>
         )}
+        {trading && (
+          <MerchantInventory
+            inventory={inventory}
+            heroGold={hero.gold}
+            handlePurchase={handlePurchase}
+          />
+        )}
       </div>
       {inCombat && <CharacterSheet creature={foe} />}
-      {trading && <MerchantInventory heroGold={hero.gold} />}
       <ActionButtons
         dead={dead}
         inCombat={inCombat}
