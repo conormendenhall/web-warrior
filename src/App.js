@@ -30,22 +30,6 @@ function App() {
   const [hero, setHero] = useState(freshHero);
   const [foe, setFoe] = useState(freshGoblin);
   const [dead, setDead] = useState(false);
-  let merchantInventory = [
-    { name: "Shield", cost: 8 },
-    { name: "Leather Armor", cost: 10 },
-    { name: "Morning Star", cost: 12 },
-    { name: "Chain Mail", cost: 14 },
-    { name: "Claymore", cost: 16 },
-    { name: "Scale Armor", cost: 16 },
-    { name: "Lucerne", cost: 18 },
-    { name: "Plate Armor", cost: 20 },
-    { name: "Cloak of Invisibility", cost: 40 },
-  ];
-  const inventoryItems = merchantInventory.map((item) => (
-    <li key={item.name}>
-      {item.name} - {item.cost}
-    </li>
-  ));
 
   function rollDie(sides) {
     return Math.floor(Math.random() * sides) + 1;
@@ -197,7 +181,7 @@ function App() {
           <div>Attack: d{foe.attackDie}</div>
         </div>
       )}
-      {trading && <div className="inventory">{inventoryItems}</div>}
+      {trading && <MerchantInventory heroGold={hero.gold} />}
       <div className="button-section">
         {!dead && named && !inCombat && hero.isRested && (
           <div className="button" onClick={handleEmbark}>
@@ -230,3 +214,29 @@ function App() {
 }
 
 export default App;
+
+const MerchantInventory = ({ heroGold }) => {
+  let merchantInventory = [
+    { name: "Shield", price: 8 },
+    { name: "Leather Armor", price: 10 },
+    { name: "Morning Star", price: 12 },
+    { name: "Chain Mail", price: 14 },
+    { name: "Claymore", price: 16 },
+    { name: "Scale Armor", price: 16 },
+    { name: "Lucerne", price: 18 },
+    { name: "Plate Armor", price: 20 },
+    { name: "Cloak of Invisibility", price: 40 },
+  ];
+  const inventoryItems = merchantInventory.map((item) => (
+    <tr key={item.name} className={heroGold < item.price ? "disabled" : ""}>
+      <td>{item.name}</td>
+      <td>{item.price} GP</td>
+    </tr>
+  ));
+
+  return (
+    <table className="inventory">
+      <tbody>{inventoryItems}</tbody>
+    </table>
+  );
+};
