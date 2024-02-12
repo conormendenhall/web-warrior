@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import "./App.scss";
-import { Health } from "./Health";
+import { CharacterSheet } from "./CharacterSheet";
 import { MerchantInventory } from "./MerchantInventory";
 
 function App() {
@@ -121,23 +121,7 @@ function App() {
   return (
     <div className="App">
       <div className="header">
-        {named && (
-          <div className="character-sheet">
-            <div className="character-header">
-              <div className="hero-name">{hero.name}</div>
-              <div className="level-box">
-                <div>Level {hero.level}</div>
-                <div>
-                  {hero.xp} / {hero.levelXP} XP
-                </div>
-              </div>
-            </div>
-            <Health hp={hero.hp} maxHP={hero.maxHP} />
-            <div>Attack: d{hero.attackDie}</div>
-            <div>{hero.gold} gold</div>
-            <div>{hero.felledFoes} foes felled</div>
-          </div>
-        )}
+        {named && <CharacterSheet creature={hero} />}
         <p className="status-message">{statusMessage}</p>
         {!named && (
           <form onSubmit={handleSubmitName}>
@@ -151,18 +135,7 @@ function App() {
           </form>
         )}
       </div>
-      {inCombat && (
-        <div className="character-sheet">
-          <div className="character-header">
-            <div className="hero-name">{foe.name}</div>
-            <div className="level-box">
-              <div>Level {foe.level}</div>
-            </div>
-          </div>
-          <Health hp={foe.hp} maxHP={foe.maxHP} />
-          <div>Attack: d{foe.attackDie}</div>
-        </div>
-      )}
+      {inCombat && <CharacterSheet creature={foe} />}
       {trading && <MerchantInventory heroGold={hero.gold} />}
       <div className="button-section">
         {!dead && named && !inCombat && hero.isRested && (
