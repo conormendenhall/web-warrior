@@ -3,9 +3,6 @@ import { useState } from "react";
 import "./App.scss";
 
 function App() {
-  const [statusMessage, setStatusMessage] = useState("What is your name?");
-  const [named, setNamed] = useState(false);
-  const [inCombat, setInCombat] = useState(false);
   const freshHero = {
     name: "Nameless Warrior",
     level: 1,
@@ -15,6 +12,7 @@ function App() {
     maxHP: 5,
     attackDie: 5,
     felledFoes: 0,
+    gold: 0,
     isRested: true,
   };
   const freshGoblin = {
@@ -23,10 +21,31 @@ function App() {
     hp: 5,
     maxHP: 5,
     attackDie: 3,
+    getLoot: () => Math.floor(Math.random() * 8),
   };
+  const [statusMessage, setStatusMessage] = useState("What is your name?");
+  const [named, setNamed] = useState(false);
+  const [inCombat, setInCombat] = useState(false);
+  const [trading, setTrading] = useState(false);
   const [hero, setHero] = useState(freshHero);
   const [foe, setFoe] = useState(freshGoblin);
   const [dead, setDead] = useState(false);
+  let merchantInventory = [
+    { name: "Shield", cost: 8 },
+    { name: "Leather Armor", cost: 10 },
+    { name: "Morning Star", cost: 12 },
+    { name: "Chain Mail", cost: 14 },
+    { name: "Claymore", cost: 16 },
+    { name: "Scale Armor", cost: 16 },
+    { name: "Lucerne", cost: 18 },
+    { name: "Plate Armor", cost: 20 },
+    { name: "Cloak of Invisibility", cost: 40 },
+  ];
+  const inventoryItems = merchantInventory.map((item) => (
+    <li key={item.name}>
+      {item.name} - {item.cost}
+    </li>
+  ));
 
   function rollDie(sides) {
     return Math.floor(Math.random() * sides) + 1;
@@ -39,18 +58,23 @@ function App() {
   }
 
   function handleChangeName(e) {
-    hero.name = e.target.value;
+    setHero({ ...hero, name: e.target.value });
   }
 
   function handleEmbark() {
     setInCombat(true);
     setStatusMessage(`You encounter a ${foe.name}.`);
+    setTrading(false);
+  }
+
+  function handleTrade() {
+    setTrading(true);
   }
 
   function handleAttack() {
     if (foe === null) return;
     const heroAtkDmg = rollDie(hero.attackDie);
-    foe.hp -= heroAtkDmg;
+    setFoe({ ...foe, hp: (foe.hp -= heroAtkDmg) });
     if (foe.hp > 0) {
       setFoe({ ...foe });
       const foeAtkDmg = rollDie(foe.attackDie);
@@ -60,9 +84,7 @@ function App() {
           `The ${foe.name} attacks for ${foeAtkDmg} damage.`
       );
       if (hero.hp - foeAtkDmg > 0) {
-        hero.hp -= foeAtkDmg;
-        hero.isRested = false;
-        setHero({ ...hero });
+        setHero({ ...hero, hp: (hero.hp -= foeAtkDmg), isRested: false });
       } else {
         setDead(true);
         setInCombat(false);
@@ -74,6 +96,7 @@ function App() {
       let victoryMessage = `You deal ${heroAtkDmg} damage, and the ${foe.name} falls dead at your feet.`;
       hero.felledFoes++;
       hero.xp += foe.maxHP + foe.attackDie;
+      hero.gold += foe.getLoot();
       if (hero.xp > hero.levelXP) {
         levelUp(hero);
         victoryMessage += ` ${hero.name} reached level ${hero.level}!`;
@@ -95,9 +118,11 @@ function App() {
 
   function handleRest() {
     const restPoints = rollDie(4);
-    hero.hp = Math.min(hero.hp + restPoints, hero.maxHP);
-    hero.isRested = true;
-    setHero({ ...hero });
+    setHero({
+      ...hero,
+      hp: Math.min(hero.hp + restPoints, hero.maxHP),
+      isRested: true,
+    });
     setStatusMessage(`You rest for ${restPoints} HP.`);
   }
 
@@ -133,6 +158,7 @@ function App() {
               </div>
             </div>
             <div>Attack: d{hero.attackDie}</div>
+            <div>{hero.gold} gold</div>
             <div>{hero.felledFoes} foes felled</div>
           </div>
         )}
@@ -143,52 +169,62 @@ function App() {
               defaultValue="Nameless Warrior"
               onChange={handleChangeName}
             />
-            <button disabled={hero.name.length === 0}>Submit</button>
+            <button className="button" disabled={hero.name.length === 0}>
+              Submit
+            </button>
           </form>
         )}
       </div>
-      {!dead && named && !inCombat && hero.isRested && (
-        <button onClick={handleEmbark} className="bottom">
-          Embark
-        </button>
-      )}
-      {!hero.isRested && !inCombat && !dead && (
-        <button onClick={handleRest} className="bottom">
-          Rest
-        </button>
-      )}
       {inCombat && (
-        <>
-          <div className="character-sheet">
-            <div className="character-header">
-              <div className="hero-name">{foe.name}</div>
-              <div className="level-box">
-                <div>Level {foe.level}</div>
-              </div>
+        <div className="character-sheet">
+          <div className="character-header">
+            <div className="hero-name">{foe.name}</div>
+            <div className="level-box">
+              <div>Level {foe.level}</div>
             </div>
-            <div className="health">
-              <div className="health-count">
-                {foe.hp} / {foe.maxHP} HP
-              </div>
-              <div className="health-bar">
-                <div
-                  className="hp"
-                  style={{ width: (foe.hp / foe.maxHP) * 100 + "%" }}
-                ></div>
-              </div>
-            </div>
-            <div>Attack: d{foe.attackDie}</div>
           </div>
-          <button onClick={handleAttack} className="bottom">
+          <div className="health">
+            <div className="health-count">
+              {foe.hp} / {foe.maxHP} HP
+            </div>
+            <div className="health-bar">
+              <div
+                className="hp"
+                style={{ width: (foe.hp / foe.maxHP) * 100 + "%" }}
+              ></div>
+            </div>
+          </div>
+          <div>Attack: d{foe.attackDie}</div>
+        </div>
+      )}
+      {trading && <div className="inventory">{inventoryItems}</div>}
+      <div className="button-section">
+        {!dead && named && !inCombat && hero.isRested && (
+          <div className="button" onClick={handleEmbark}>
+            Embark
+          </div>
+        )}
+        {!dead && named && !inCombat && hero.isRested && !trading && (
+          <div className="button" onClick={handleTrade}>
+            Trade
+          </div>
+        )}
+        {!hero.isRested && !inCombat && !dead && (
+          <div className="button" onClick={handleRest}>
+            Rest
+          </div>
+        )}
+        {inCombat && (
+          <div className="button" onClick={handleAttack}>
             Attack
-          </button>
-        </>
-      )}
-      {dead && (
-        <button onClick={handleResurrection} className="bottom">
-          Rise again
-        </button>
-      )}
+          </div>
+        )}
+        {dead && (
+          <div className="button" onClick={handleResurrection}>
+            Rise again
+          </div>
+        )}
+      </div>
     </div>
   );
 }

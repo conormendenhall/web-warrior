@@ -1,9 +1,9 @@
 $color-dark: #2f3428;
 $color-light: #dfc9e8;
 $radius: 0.25em;
-$font-size-sm: calc(8px + 2vmin);
-$font-size-md: calc(10px + 2vmin);
-$font-size-lg: calc(12px + 2vmin);
+$size-sm: calc(8px + 2vmin);
+$size-md: calc(10px + 2vmin);
+$size-lg: calc(12px + 2vmin);
 
 .App {
   display: flex;
@@ -12,7 +12,7 @@ $font-size-lg: calc(12px + 2vmin);
   max-width: 500px;
   margin: auto;
   height: calc(100vh - 2em);
-  font-size: $font-size-md;
+  font-size: $size-md;
   background-color: $color-dark;
   color: $color-light;
 }
@@ -24,18 +24,18 @@ $font-size-lg: calc(12px + 2vmin);
 .character-sheet {
   max-width: calc(400px + 2vmin);
   padding: 0.5em;
-  margin-bottom: .5em;
+  margin-bottom: 0.5em;
   border-radius: $radius;
   background-color: $color-light;
   color: $color-dark;
-  font-size: $font-size-sm;
+  font-size: $size-sm;
 
   .character-header {
     display: flex;
     justify-content: space-between;
 
     .hero-name {
-      font-size: $font-size-lg;
+      font-size: $size-lg;
     }
   }
 
@@ -63,15 +63,25 @@ $font-size-lg: calc(12px + 2vmin);
 }
 
 .status-message {
-  font-size: $font-size-lg;
+  font-size: $size-lg;
   font-weight: 700;
-  padding-bottom: .5em;
+  padding-bottom: 0.5em;
   margin-bottom: auto;
 }
 
-button.bottom {
-  flex-grow: 2;
-  width: 100%;
-  max-height: 50px;
-  font-size: 20px;
+.button-section {
+  display: flex;
+  justify-content: space-between;
+
+  .button {
+    cursor: pointer;
+    padding: $size-lg 0;
+    width: calc(50% - 0.5em);
+    border-radius: $radius;
+    font-size: $size-lg;
+    text-align: center;
+    vertical-align: middle;
+    background-color: $color-light;
+    color: $color-dark;
+  }
 }
