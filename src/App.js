@@ -31,46 +31,55 @@ const App = () => {
       name: "Shield",
       price: 8,
       message: "Ah, the trusty shield. May it guard you well.",
+      deflectDie: 5,
     },
     {
       name: "Leather Armor",
       price: 10,
       message: "You think this will protect you? Good luck.",
+      armorDie: 4,
     },
     {
       name: "Morning Star",
       price: 12,
       message: "So, you lust for blood. Heh heh...",
+      attackDie: 8,
     },
     {
       name: "Chain Mail",
       price: 14,
       message: "See these links? They may save your hide.",
+      armorDie: 6,
     },
     {
       name: "Claymore",
       price: 16,
       message: "Strike true, warrior.",
+      attackDie: 10,
     },
     {
       name: "Scale Armor",
       price: 16,
       message: "Ah, look how it shimmers. Heh...",
+      armorDie: 8,
     },
     {
       name: "Lucerne",
       price: 18,
       message: "Be careful where you swing that thing.",
+      attackDie: 12,
     },
     {
       name: "Plate Armor",
       price: 20,
       message: "This steel is nigh impenetrable.",
+      armorDie: 10,
     },
     {
       name: "Cloak of Invisibility",
       price: 40,
       message: "I wonder, what will you do when no one can see you?",
+      invisibility: true,
     },
   ];
   const [statusMessage, setStatusMessage] = useState("What is your name?");
