@@ -148,18 +148,29 @@ const App = () => {
 
   function handleAttack() {
     if (foe === null) return;
+
     const heroAtkDmg = rollDie(hero.attackDie);
     setFoe({ ...foe, hp: (foe.hp -= heroAtkDmg) });
     let message = `You strike the ${foe.name} for ${heroAtkDmg} damage.`;
+
     if (foe.hp > 0) {
-      message += ` The ${foe.name} still stands, sneering at you.`;
+      message += ` It still stands, sneering at you.`;
+
       if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
         message += ` The ${foe.name} attacks, but you deflect it with your shield.`;
         setStatusMessage(message);
       } else {
-        const foeAtkDmg = rollDie(foe.attackDie);
-        message += ` The ${foe.name} attacks for ${foeAtkDmg} damage.`;
+        let foeAtkDmg = rollDie(foe.attackDie);
+        let dmgReduction = 0;
+
+        if (hero.armorDie > 0) {
+          dmgReduction = rollDie(hero.armorDie);
+          foeAtkDmg = Math.max(foeAtkDmg - dmgReduction, 0);
+          message += ` The ${foe.name} attacks! Your armor negates ${dmgReduction} damage.`;
+        }
+        message += ` You take ${foeAtkDmg} damage.`;
         setStatusMessage(message);
+
         if (hero.hp - foeAtkDmg > 0) {
           setHero({ ...hero, hp: (hero.hp -= foeAtkDmg), isRested: false });
         } else {
@@ -175,6 +186,7 @@ const App = () => {
       hero.felledFoes++;
       hero.xp += foe.maxHP + foe.attackDie;
       hero.gold += rollDie(foe.lootDie);
+
       if (hero.xp > hero.levelXP) {
         levelUp(hero);
         victoryMessage += ` ${hero.name} reached level ${hero.level}!`;
