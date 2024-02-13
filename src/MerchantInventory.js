@@ -11,7 +11,7 @@ export const MerchantInventory = ({ inventory, heroGold, handlePurchase }) => {
   ));
 
   return (
-    <table className="inventory">
+    <table className="merchant-inventory">
       <tbody>{inventoryItems}</tbody>
     </table>
   );

@@ -18,6 +18,13 @@ export const CharacterSheet = ({ creature }) => {
       <div>Attack: d{creature.attackDie}</div>
       {creature.gold >= 0 && <div>{creature.gold} gold</div>}
       {creature.felledFoes >= 0 && <div>{creature.felledFoes} foes felled</div>}
+      {creature.inventory?.length > 0 && (
+        <div className="character-inventory">
+          {creature.inventory.map((item) => (
+            <div>{item.name}</div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

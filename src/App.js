@@ -17,6 +17,7 @@ const App = () => {
     felledFoes: 0,
     gold: 0,
     isRested: true,
+    inventory: [],
   };
   const freshGoblin = {
     name: "Goblin",
@@ -86,7 +87,7 @@ const App = () => {
   const [named, setNamed] = useState(false);
   const [inCombat, setInCombat] = useState(false);
   const [trading, setTrading] = useState(false);
-  const [inventory, setInventory] = useState(freshInventory);
+  const [merchantInventory, setMerchantInventory] = useState(freshInventory);
   const [hero, setHero] = useState(freshHero);
   const [foe, setFoe] = useState(freshGoblin);
   const [dead, setDead] = useState(false);
@@ -114,7 +115,7 @@ const App = () => {
   function handleTrade() {
     setTrading(true);
     const message =
-      inventory.length > 0
+      merchantInventory.length > 0
         ? "Hello, weary traveler. See anything you like?"
         : "You've cleaned me out. I must head back to town to restock the caravan.";
     setStatusMessage(message);
@@ -122,8 +123,14 @@ const App = () => {
 
   function handlePurchase(selection) {
     if (hero.gold >= selection.price) {
-      setHero({ ...hero, gold: (hero.gold -= selection.price) });
-      setInventory(inventory.filter((item) => item.name !== selection.name));
+      setHero({
+        ...hero,
+        gold: (hero.gold -= selection.price),
+        inventory: [...hero.inventory, selection],
+      });
+      setMerchantInventory(
+        merchantInventory.filter((item) => item.name !== selection.name)
+      );
       setStatusMessage(selection.message);
     }
   }
@@ -207,7 +214,7 @@ const App = () => {
         )}
         {trading && (
           <MerchantInventory
-            inventory={inventory}
+            inventory={merchantInventory}
             heroGold={hero.gold}
             handlePurchase={handlePurchase}
           />
