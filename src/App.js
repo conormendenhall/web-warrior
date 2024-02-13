@@ -14,10 +14,13 @@ const App = () => {
     hp: 5,
     maxHP: 5,
     attackDie: 5,
-    felledFoes: 0,
-    gold: 0,
+    armorDie: 0,
+    deflectDie: 0,
+    isCloaked: false,
     isRested: true,
-    inventory: [],
+    gold: 0,
+    equipment: [],
+    felledFoes: 0,
   };
   const freshGoblin = {
     name: "Goblin",
@@ -80,7 +83,7 @@ const App = () => {
       name: "Cloak of Invisibility",
       price: 40,
       message: "I wonder, what will you do when no one can see you?",
-      invisibility: true,
+      isCloaked: true,
     },
   ];
   const [statusMessage, setStatusMessage] = useState("What is your name?");
@@ -123,10 +126,18 @@ const App = () => {
 
   function handlePurchase(selection) {
     if (hero.gold >= selection.price) {
+      const newAttackDie = selection.attackDie ?? hero.attackDie;
+      const newArmorDie = selection.armorDie ?? hero.armorDie;
+      const newDeflectDie = selection.deflectDie ?? hero.deflectDie;
+      const newIsCloaked = selection.isCloaked ?? hero.isCloaked;
       setHero({
         ...hero,
         gold: (hero.gold -= selection.price),
-        inventory: [...hero.inventory, selection],
+        attackDie: newAttackDie,
+        armorDie: newArmorDie,
+        deflectDie: newDeflectDie,
+        isCloaked: newIsCloaked,
+        equipment: [...hero.equipment, selection],
       });
       setMerchantInventory(
         merchantInventory.filter((item) => item.name !== selection.name)
@@ -139,25 +150,28 @@ const App = () => {
     if (foe === null) return;
     const heroAtkDmg = rollDie(hero.attackDie);
     setFoe({ ...foe, hp: (foe.hp -= heroAtkDmg) });
+    let message = `You strike the ${foe.name} for ${heroAtkDmg} damage.`;
     if (foe.hp > 0) {
-      setFoe({ ...foe });
-      const foeAtkDmg = rollDie(foe.attackDie);
-      setStatusMessage(
-        `You strike the ${foe.name} for ${heroAtkDmg} damage. ` +
-          `The ${foe.name} still stands, sneering at you. ` +
-          `The ${foe.name} attacks for ${foeAtkDmg} damage.`
-      );
-      if (hero.hp - foeAtkDmg > 0) {
-        setHero({ ...hero, hp: (hero.hp -= foeAtkDmg), isRested: false });
+      message += ` The ${foe.name} still stands, sneering at you.`;
+      if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
+        message += ` The ${foe.name} attacks, but you deflect it with your shield.`;
+        setStatusMessage(message);
       } else {
-        setDead(true);
-        setInCombat(false);
-        setStatusMessage(
-          `The ${foe.name} struck you down. Rest in Peace, ${hero.name}`
-        );
+        const foeAtkDmg = rollDie(foe.attackDie);
+        message += ` The ${foe.name} attacks for ${foeAtkDmg} damage.`;
+        setStatusMessage(message);
+        if (hero.hp - foeAtkDmg > 0) {
+          setHero({ ...hero, hp: (hero.hp -= foeAtkDmg), isRested: false });
+        } else {
+          setDead(true);
+          setInCombat(false);
+          setStatusMessage(
+            `The ${foe.name} strikes you down. Rest in Peace, ${hero.name}`
+          );
+        }
       }
     } else {
-      let victoryMessage = `You deal ${heroAtkDmg} damage, and the ${foe.name} falls dead at your feet.`;
+      let victoryMessage = `You strike the ${foe.name} for ${heroAtkDmg} damage, and it falls dead at your feet.`;
       hero.felledFoes++;
       hero.xp += foe.maxHP + foe.attackDie;
       hero.gold += rollDie(foe.lootDie);

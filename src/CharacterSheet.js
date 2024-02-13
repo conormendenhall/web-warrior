@@ -15,16 +15,25 @@ export const CharacterSheet = ({ creature }) => {
         </div>
       </div>
       <Health hp={creature.hp} maxHP={creature.maxHP} />
-      <div>Attack: d{creature.attackDie}</div>
-      {creature.gold >= 0 && <div>{creature.gold} gold</div>}
-      {creature.felledFoes >= 0 && <div>{creature.felledFoes} foes felled</div>}
-      {creature.inventory?.length > 0 && (
-        <div className="character-inventory">
-          {creature.inventory.map((item) => (
-            <div>{item.name}</div>
-          ))}
+      <div className="character-body">
+        {creature.equipment?.length > 0 && (
+          <div className="equipment">
+            {creature.equipment.map((item) => (
+              <div>{item.name}</div>
+            ))}
+          </div>
+        )}
+        <div className="status">
+          <div>Attack: d{creature.attackDie}</div>
+          {creature.armorDie > 0 && <div>Armor: d{creature.armorDie}</div>}
+          {creature.deflectDie > 0 && <div>Shield: d{creature.deflectDie}</div>}
+          {creature.isCloaked > 0 && <div>Cloaked</div>}
+          {creature.gold >= 0 && <div>Gold: {creature.gold} GP</div>}
+          {creature.felledFoes >= 0 && (
+            <div>Foes Felled: {creature.felledFoes}</div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

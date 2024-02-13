@@ -9,7 +9,7 @@
   flex-direction: column;
   max-width: $width;
   margin: auto;
-  height: 100vh;
+  min-height: 100vh;
   font-size: $size-md;
   background-color: #fff;
   color: $color-dark;

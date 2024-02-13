@@ -42,7 +42,14 @@
     }
   }
 
-  .character-inventory {
-    border-top: 1px solid $color-dark;
+  .character-body {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 0.5em;
+
+    .status {
+      margin-left: auto;
+      text-align: end;
+    }
   }
 }
