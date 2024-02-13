@@ -1,11 +1,8 @@
-$color-dark: hsl(85, 13%, 18%);
-$color-light: hsl(283, 40%, 85%);
-$color-disabled: hsl(283, 10%, 30%);
-$color-primary: hsl(27, 100%, 50%);
-$size-sm: calc(8px + 2vmin);
-$size-md: calc(10px + 2vmin);
-$size-lg: calc(12px + 2vmin);
-$size-xl: calc(14px + 2vmin);
+@import "./variables";
+
+@import "./ActionButtons.scss";
+@import "./CharacterSheet.scss";
+@import "./MerchantInventory.scss";
 
 .App {
   display: flex;
@@ -23,106 +20,10 @@ $size-xl: calc(14px + 2vmin);
   margin-bottom: auto;
 }
 
-.character-sheet {
-  max-width: calc(400px + 2vmin);
-  padding: 0.5em;
-  margin-bottom: 0.5em;
-  background-color: $color-light;
-  color: $color-dark;
-  font-size: $size-sm;
-
-  .character-header {
-    display: flex;
-    justify-content: space-between;
-
-    .hero-name {
-      font-size: $size-xl;
-      font-family: "Macondo";
-    }
-
-    .level-box {
-      text-align: end;
-    }
-  }
-
-  .health {
-    display: flex;
-    flex-direction: row;
-
-    .health-count {
-      margin-right: 0.5em;
-    }
-
-    .health-bar {
-      flex-grow: 2;
-      height: 1em;
-      background-color: firebrick;
-
-      .hp {
-        height: 1em;
-        background-color: forestgreen;
-      }
-    }
-  }
-}
-
 .status-message {
   font-family: "Macondo";
   font-size: $size-lg;
   font-weight: 700;
   padding-bottom: 0.5em;
   margin-bottom: auto;
-}
-
-table.inventory {
-  font-size: $size-sm;
-  margin-bottom: 0.5em;
-  border-collapse: collapse;
-
-  tr {
-    background-color: hsl(85, 13%, 15%);
-    border: 4px solid transparent;
-
-    &:nth-child(even) {
-      background-color: hsl(85, 13%, 17%);
-    }
-
-    &:not(.disabled):hover {
-      border: 4px solid $color-primary;
-      cursor: pointer;
-
-      td {
-        border-top: 4px solid $color-primary;
-      }
-    }
-
-    &.disabled {
-      color: $color-disabled;
-    }
-
-    td {
-      padding: 8px;
-    }
-  }
-}
-
-.button-section {
-  display: flex;
-  justify-content: space-between;
-
-  .button {
-    cursor: pointer;
-    padding: $size-lg 0;
-    width: calc(50% - 0.5em);
-    font-size: $size-lg;
-    border: 4px solid $color-dark;
-    text-align: center;
-    vertical-align: middle;
-    background-color: $color-light;
-    color: $color-dark;
-
-    &:hover {
-      border: 4px solid $color-primary;
-    }
-  }
 }

@@ -28,7 +28,7 @@ export const ActionButtons = ({
   }
 
   return (
-    <div className="button-section">
+    <div className="action-buttons">
       {named && (
         <div className="button" onClick={handler}>
           {text}

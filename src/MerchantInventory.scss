@@ -1,0 +1,33 @@
+@import './variables';
+
+table.inventory {
+  font-size: $size-sm;
+  margin-bottom: 0.5em;
+  border-collapse: collapse;
+
+  tr {
+    background-color: hsl(85, 13%, 15%);
+    border: 4px solid transparent;
+
+    &:nth-child(even) {
+      background-color: hsl(85, 13%, 17%);
+    }
+
+    &:not(.disabled):hover {
+      border: 4px solid $color-primary;
+      cursor: pointer;
+
+      td {
+        border-top: 4px solid $color-primary;
+      }
+    }
+
+    &.disabled {
+      color: $color-disabled;
+    }
+
+    td {
+      padding: 8px;
+    }
+  }
+}

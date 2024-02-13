@@ -1,0 +1,44 @@
+@import './variables';
+
+.character-sheet {
+  max-width: calc(400px + 2vmin);
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  background-color: $color-light;
+  color: $color-dark;
+  font-size: $size-sm;
+
+  .character-header {
+    display: flex;
+    justify-content: space-between;
+
+    .hero-name {
+      font-size: $size-xl;
+      font-family: "Macondo";
+    }
+
+    .level-box {
+      text-align: end;
+    }
+  }
+
+  .health {
+    display: flex;
+    flex-direction: row;
+
+    .health-count {
+      margin-right: 0.5em;
+    }
+
+    .health-bar {
+      flex-grow: 2;
+      height: 1em;
+      background-color: firebrick;
+
+      .hp {
+        height: 1em;
+        background-color: forestgreen;
+      }
+    }
+  }
+}
