@@ -2,7 +2,7 @@ export const MerchantInventory = ({ inventory, heroGold, handlePurchase }) => {
   const inventoryItems = inventory.map((item) => (
     <tr
       key={item.name}
-      onClick={() => handlePurchase(item.name, item.price)}
+      onClick={() => handlePurchase(item)}
       className={heroGold < item.price ? "disabled" : ""}
     >
       <td>{item.name}</td>

@@ -2,15 +2,17 @@
 
 table.inventory {
   font-size: $size-sm;
+  width: 100%;
   margin-bottom: 0.5em;
+  padding: 1em;
   border-collapse: collapse;
 
   tr {
-    background-color: hsl(85, 13%, 15%);
+    background-color: $gradient;
     border: 4px solid transparent;
 
     &:nth-child(even) {
-      background-color: hsl(85, 13%, 17%);
+      background-color: #eee;
     }
 
     &:not(.disabled):hover {
@@ -27,7 +29,7 @@ table.inventory {
     }
 
     td {
-      padding: 8px;
+      padding: 4px;
     }
   }
 }

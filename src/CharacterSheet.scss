@@ -1,12 +1,11 @@
-@import './variables';
+@import "./variables";
 
 .character-sheet {
-  max-width: calc(400px + 2vmin);
-  padding: 0.5em;
-  margin-bottom: 0.5em;
-  background-color: $color-light;
+  max-width: $width;
+  padding: 1em;
   color: $color-dark;
   font-size: $size-sm;
+  background: $gradient;
 
   .character-header {
     display: flex;
@@ -25,6 +24,7 @@
   .health {
     display: flex;
     flex-direction: row;
+    align-items: center;
 
     .health-count {
       margin-right: 0.5em;

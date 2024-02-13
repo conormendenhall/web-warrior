@@ -7,23 +7,24 @@
 .App {
   display: flex;
   flex-direction: column;
-  padding: 1em;
-  max-width: 500px;
+  max-width: $width;
   margin: auto;
-  height: calc(100vh - 2em);
+  height: 100vh;
   font-size: $size-md;
-  background-color: $color-dark;
-  color: $color-light;
+  background-color: #fff;
+  color: $color-dark;
 }
 
 .header {
   margin-bottom: auto;
-}
 
-.status-message {
-  font-family: "Macondo";
-  font-size: $size-lg;
-  font-weight: 700;
-  padding-bottom: 0.5em;
-  margin-bottom: auto;
+  .name-form {
+    padding: 1em;
+  }
+
+  .status-message {
+    font-family: "Macondo";
+    font-size: $size-lg;
+    padding: 1em;
+  }
 }

@@ -1,8 +1,11 @@
-$color-dark: hsl(85, 13%, 18%);
-$color-light: hsl(283, 40%, 85%);
-$color-disabled: hsl(283, 10%, 30%);
-$color-primary: hsl(27, 100%, 50%);
+$color-dark: hwb(83 18% 78%);
+$color-light: hsl(210, 7%, 87%);
+$color-disabled: hsl(84, 10%, 70%);
+$color-primary: hsl(350, 100%, 50%);
+$gradient: linear-gradient(0deg, hsl(0, 0%, 93%) 0%, hsl(0, 0%, 100%) 100%);
+$size-xs: calc(6px + 2vmin);
 $size-sm: calc(8px + 2vmin);
 $size-md: calc(10px + 2vmin);
 $size-lg: calc(12px + 2vmin);
 $size-xl: calc(14px + 2vmin);
+$width: calc(500px + 2vmin);

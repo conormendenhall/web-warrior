@@ -27,15 +27,51 @@ const App = () => {
     lootDie: 8,
   };
   const freshInventory = [
-    { name: "Shield", price: 8 },
-    { name: "Leather Armor", price: 10 },
-    { name: "Morning Star", price: 12 },
-    { name: "Chain Mail", price: 14 },
-    { name: "Claymore", price: 16 },
-    { name: "Scale Armor", price: 16 },
-    { name: "Lucerne", price: 18 },
-    { name: "Plate Armor", price: 20 },
-    { name: "Cloak of Invisibility", price: 40 },
+    {
+      name: "Shield",
+      price: 8,
+      message: "Ah, the trusty shield. May it guard you well.",
+    },
+    {
+      name: "Leather Armor",
+      price: 10,
+      message: "You think this will protect you? Good luck.",
+    },
+    {
+      name: "Morning Star",
+      price: 12,
+      message: "So, you lust for blood. Heh heh...",
+    },
+    {
+      name: "Chain Mail",
+      price: 14,
+      message: "See these links? They may save your hide.",
+    },
+    {
+      name: "Claymore",
+      price: 16,
+      message: "Strike true, warrior.",
+    },
+    {
+      name: "Scale Armor",
+      price: 16,
+      message: "Ah, look how it shimmers. Heh...",
+    },
+    {
+      name: "Lucerne",
+      price: 18,
+      message: "Be careful where you swing that thing.",
+    },
+    {
+      name: "Plate Armor",
+      price: 20,
+      message: "This steel is nigh impenetrable.",
+    },
+    {
+      name: "Cloak of Invisibility",
+      price: 40,
+      message: "I wonder, what will you do when no one can see you?",
+    },
   ];
   const [statusMessage, setStatusMessage] = useState("What is your name?");
   const [named, setNamed] = useState(false);
@@ -68,14 +104,18 @@ const App = () => {
 
   function handleTrade() {
     setTrading(true);
-    setStatusMessage("Hello, weary traveler. See anything you like?");
+    const message =
+      inventory.length > 0
+        ? "Hello, weary traveler. See anything you like?"
+        : "You've cleaned me out. I must head back to town to restock the caravan.";
+    setStatusMessage(message);
   }
 
-  function handlePurchase(selection, price) {
-    if (hero.gold >= price) {
-      setHero({ ...hero, gold: (hero.gold -= price) });
-      setInventory(inventory.filter((item) => item.name !== selection));
-      setStatusMessage(`Ahh, the ${selection}. Good choice.`);
+  function handlePurchase(selection) {
+    if (hero.gold >= selection.price) {
+      setHero({ ...hero, gold: (hero.gold -= selection.price) });
+      setInventory(inventory.filter((item) => item.name !== selection.name));
+      setStatusMessage(selection.message);
     }
   }
 
@@ -146,7 +186,7 @@ const App = () => {
         {named && <CharacterSheet creature={hero} />}
         <p className="status-message">{statusMessage}</p>
         {!named && (
-          <form onSubmit={handleSubmitName}>
+          <form onSubmit={handleSubmitName} className="name-form">
             <input
               defaultValue="Nameless Warrior"
               onChange={handleChangeName}
