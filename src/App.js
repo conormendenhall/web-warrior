@@ -110,9 +110,41 @@ const App = () => {
   }
 
   function handleEmbark() {
-    setInCombat(true);
-    setStatusMessage(`You encounter a ${foe.name}.`);
     setTrading(false);
+    setInCombat(true);
+    let message = `You encounter a ${foe.name}.`;
+    if (rollDie(2) === 1) {
+      message += ` It ambushes you!`;
+      foeAttack(message);
+      return;
+    }
+    setStatusMessage(message);
+  }
+
+  function handleAttack() {
+    if (foe === null) return;
+
+    const heroAtkDmg = rollDie(hero.attackDie);
+    setFoe({ ...foe, hp: (foe.hp -= heroAtkDmg) });
+    let message = `You strike the ${foe.name} for ${heroAtkDmg} damage.`;
+
+    if (foe.hp > 0) {
+      foeAttack(message);
+    } else {
+      let victoryMessage = `You strike the ${foe.name} for ${heroAtkDmg} damage, and it falls dead at your feet.`;
+      hero.felledFoes++;
+      hero.xp += foe.maxHP + foe.attackDie;
+      hero.gold += rollDie(foe.lootDie);
+
+      if (hero.xp > hero.levelXP) {
+        levelUp(hero);
+        victoryMessage += ` ${hero.name} reached level ${hero.level}!`;
+      }
+      setStatusMessage(victoryMessage);
+      setHero({ ...hero });
+      setInCombat(false);
+      setFoe(freshGoblin);
+    }
   }
 
   function handleTrade() {
@@ -146,55 +178,34 @@ const App = () => {
     }
   }
 
-  function handleAttack() {
-    if (foe === null) return;
+  function foeAttack(message) {
+    if (foe.hp < foe.maxHP) message += ` It still stands, sneering at you.`;
 
-    const heroAtkDmg = rollDie(hero.attackDie);
-    setFoe({ ...foe, hp: (foe.hp -= heroAtkDmg) });
-    let message = `You strike the ${foe.name} for ${heroAtkDmg} damage.`;
-
-    if (foe.hp > 0) {
-      message += ` It still stands, sneering at you.`;
-
-      if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
-        message += ` The ${foe.name} attacks, but you deflect it with your shield.`;
-        setStatusMessage(message);
-      } else {
-        let foeAtkDmg = rollDie(foe.attackDie);
-        let dmgReduction = 0;
-
-        if (hero.armorDie > 0) {
-          dmgReduction = rollDie(hero.armorDie);
-          foeAtkDmg = Math.max(foeAtkDmg - dmgReduction, 0);
-          message += ` The ${foe.name} attacks! Your armor negates ${dmgReduction} damage.`;
-        }
-        message += ` You take ${foeAtkDmg} damage.`;
-        setStatusMessage(message);
-
-        if (hero.hp - foeAtkDmg > 0) {
-          setHero({ ...hero, hp: (hero.hp -= foeAtkDmg), isRested: false });
-        } else {
-          setDead(true);
-          setInCombat(false);
-          setStatusMessage(
-            `The ${foe.name} strikes you down. Rest in Peace, ${hero.name}`
-          );
-        }
-      }
+    if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
+      message += ` The ${foe.name} attacks, but you deflect it with your shield.`;
+      setStatusMessage(message);
     } else {
-      let victoryMessage = `You strike the ${foe.name} for ${heroAtkDmg} damage, and it falls dead at your feet.`;
-      hero.felledFoes++;
-      hero.xp += foe.maxHP + foe.attackDie;
-      hero.gold += rollDie(foe.lootDie);
+      message += ` The ${foe.name} strikes.`;
+      let foeAtkDmg = rollDie(foe.attackDie);
+      let dmgReduction = 0;
 
-      if (hero.xp > hero.levelXP) {
-        levelUp(hero);
-        victoryMessage += ` ${hero.name} reached level ${hero.level}!`;
+      if (hero.armorDie > 0) {
+        dmgReduction = rollDie(hero.armorDie);
+        foeAtkDmg = Math.max(foeAtkDmg - dmgReduction, 0);
+        message += ` Your armor negates ${dmgReduction} damage.`;
       }
-      setStatusMessage(victoryMessage);
-      setHero({ ...hero });
-      setInCombat(false);
-      setFoe(freshGoblin);
+      message += ` You take ${foeAtkDmg} damage.`;
+      setStatusMessage(message);
+
+      if (hero.hp - foeAtkDmg > 0) {
+        setHero({ ...hero, hp: (hero.hp -= foeAtkDmg), isRested: false });
+      } else {
+        setHero({ ...hero, hp: 0 });
+        setDead(true);
+        setInCombat(false);
+        message += ` The ${foe.name} strikes you down. Rest in Peace, ${hero.name}`;
+        setStatusMessage(message);
+      }
     }
   }
 
@@ -217,8 +228,8 @@ const App = () => {
   }
 
   function handleResurrection() {
+    setStatusMessage("Hello again, warrior.");
     setHero({ ...freshHero, name: hero.name });
-    setNamed(false);
     setDead(false);
   }
 
