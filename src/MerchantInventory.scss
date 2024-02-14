@@ -1,35 +1,31 @@
-@import './variables';
+@import "./variables";
 
-table.merchant-inventory {
+.merchant-inventory {
   font-size: $size-sm;
-  width: 100%;
-  margin-bottom: 0.5em;
-  padding: 1em;
-  border-collapse: collapse;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  max-height: 20em;
 
-  tr {
-    background-color: $gradient;
+  .item {
+    display: flex;
+    justify-content: space-between;
+    max-width: 50%;
     border: 4px solid transparent;
+    padding: 0.5em;
 
-    &:nth-child(even) {
+    &:nth-child(odd) {
       background-color: #eee;
     }
 
     &:not(.disabled):hover {
       border: 4px solid $color-primary;
       cursor: pointer;
-
-      td {
-        border-top: 4px solid $color-primary;
-      }
+      border-top: 4px solid $color-primary;
     }
 
     &.disabled {
       color: $color-disabled;
-    }
-
-    td {
-      padding: 4px;
     }
   }
 }

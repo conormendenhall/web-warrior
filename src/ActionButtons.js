@@ -1,3 +1,5 @@
+import "./ActionButtons.scss";
+
 export const ActionButtons = ({
   dead,
   inCombat,

@@ -1,18 +1,16 @@
+import "./MerchantInventory.scss";
+
 export const MerchantInventory = ({ inventory, heroGold, handlePurchase }) => {
   const inventoryItems = inventory.map((item) => (
-    <tr
+    <div
       key={item.name}
       onClick={() => handlePurchase(item)}
-      className={heroGold < item.price ? "disabled" : ""}
+      className={"item" + (heroGold < item.price ? " disabled" : "")}
     >
-      <td>{item.name}</td>
-      <td>{item.price} GP</td>
-    </tr>
+      <span>{item.name}</span>
+      <span>{item.price} GP</span>
+    </div>
   ));
 
-  return (
-    <table className="merchant-inventory">
-      <tbody>{inventoryItems}</tbody>
-    </table>
-  );
+  return <div className="merchant-inventory">{inventoryItems}</div>;
 };

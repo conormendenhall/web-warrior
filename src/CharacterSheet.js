@@ -1,5 +1,7 @@
 import { Health } from "./Health";
 
+import "./CharacterSheet.scss";
+
 export const CharacterSheet = ({ creature }) => {
   return (
     <div className="character-sheet">
@@ -19,7 +21,7 @@ export const CharacterSheet = ({ creature }) => {
         {creature.equipment?.length > 0 && (
           <div className="equipment">
             {creature.equipment.map((item) => (
-              <div>{item.name}</div>
+              <div key={item.name}>{item.name}</div>
             ))}
           </div>
         )}
