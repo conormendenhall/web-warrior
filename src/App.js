@@ -169,7 +169,8 @@ const App = () => {
       setStatusMessage(message);
 
       if (hero.hp - foeAtkDmg > 0) {
-        setHero({ ...hero, hp: (hero.hp -= foeAtkDmg), isRested: false });
+        hero.hp -= foeAtkDmg;
+        setHero({ ...hero, hp: hero.hp, isRested: false });
       } else {
         setHero({ ...hero, hp: 0 });
         setDead(true);
@@ -187,6 +188,7 @@ const App = () => {
     hero.levelXP += Math.floor(hero.levelXP / 4);
     hero.maxHP += 3;
     hero.hp = hero.maxHP;
+    
     return hero.level++;
   }
 
@@ -204,9 +206,17 @@ const App = () => {
     setTrading(false);
     setInCombat(true);
     let message = `You encounter a ${foe.name}.`;
+
     if (rollDie(2) === 1) {
+      if (hero.isCloaked) {
+        message += ` It waits in ambush, but your cloak lets you go unnoticed.`;
+        setStatusMessage(message);
+
+        return;
+      }
       message += ` It ambushes you!`;
       foeAttack(message);
+
       return;
     }
     setStatusMessage(message);
@@ -254,9 +264,10 @@ const App = () => {
       const newArmorDie = selection.armorDie ?? hero.armorDie;
       const newDeflectDie = selection.deflectDie ?? hero.deflectDie;
       const newIsCloaked = selection.isCloaked ?? hero.isCloaked;
+      hero.gold -= selection.price;
       setHero({
         ...hero,
-        gold: (hero.gold -= selection.price),
+        gold: hero.gold,
         damageDie: newDmgDie,
         armorDie: newArmorDie,
         deflectDie: newDeflectDie,
