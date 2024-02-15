@@ -3,7 +3,7 @@
 .character-sheet {
   max-width: $width;
   padding: 1em;
-  color: $color-dark;
+  color: $color-text;
   font-size: $size-sm;
   background: $gradient;
 
@@ -38,7 +38,7 @@
       .hp {
         height: 1em;
         background-color: forestgreen;
-        transition: width .2s;
+        transition: width 0.2s;
       }
     }
   }

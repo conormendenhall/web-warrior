@@ -26,7 +26,7 @@ export const CharacterSheet = ({ creature }) => {
           </div>
         )}
         <div className="status">
-          <div>Attack: d{creature.attackDie}</div>
+          <div>Damage: d{creature.damageDie}</div>
           {creature.armorDie > 0 && <div>Armor: d{creature.armorDie}</div>}
           {creature.deflectDie > 0 && <div>Shield: d{creature.deflectDie}</div>}
           {creature.isCloaked > 0 && <div>Cloaked</div>}
