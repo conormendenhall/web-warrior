@@ -9,32 +9,39 @@
   font-size: $size-md;
   background-color: $color-background;
   color: $color-primary;
-}
 
-.App::after {
-  position: absolute;
-  background-image: url("../public/film-grain.jpeg");
-  opacity: 0.3;
-  content: "";
-  width: $width;
-  height: 100vh;
-  background-size: $width 100vh;
-  pointer-events: none;
-}
-
-.header {
-  margin-bottom: auto;
-  backdrop-filter: $blur;
-  background-color: $color-dark-opaque;
-  z-index: 1;
-
-  .name-form {
-    padding: 1em;
+  &::after {
+    position: absolute;
+    background-image: url("../public/film-grain.jpeg");
+    opacity: 0.3;
+    content: "";
+    width: $width;
+    height: 100vh;
+    background-size: $width 100vh;
+    pointer-events: none;
   }
 
-  .status-message {
-    font-family: "Macondo";
-    font-size: $size-lg;
-    padding: 1em;
+  button,
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+    font-size: $size-sm;
+  }
+
+  .header {
+    margin-bottom: auto;
+    backdrop-filter: $blur;
+    background-color: $color-dark-opaque;
+    z-index: 1;
+
+    .name-form {
+      padding: 1em;
+    }
+
+    .status-message {
+      font-size: $size-md;
+      padding: 1em;
+    }
   }
 }

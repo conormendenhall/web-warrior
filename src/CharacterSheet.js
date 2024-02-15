@@ -30,7 +30,7 @@ export const CharacterSheet = ({ creature }) => {
           {creature.armorDie > 0 && <div>Armor: d{creature.armorDie}</div>}
           {creature.deflectDie > 0 && <div>Shield: d{creature.deflectDie}</div>}
           {creature.isCloaked > 0 && <div>Cloaked</div>}
-          {creature.gold >= 0 && <div>Gold: {creature.gold} GP</div>}
+          {creature.gold >= 0 && <div>Gold: {creature.gold}</div>}
           {creature.felledFoes >= 0 && (
             <div>Foes Felled: {creature.felledFoes}</div>
           )}

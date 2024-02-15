@@ -184,7 +184,7 @@ const App = () => {
 
   function levelUp(hero) {
     hero.xp -= hero.levelXP;
-    hero.levelXP += Math.floor(hero.levelXP / 5);
+    hero.levelXP += Math.floor(hero.levelXP / 4);
     hero.maxHP += 3;
     hero.hp = hero.maxHP;
     return hero.level++;
@@ -216,7 +216,8 @@ const App = () => {
     if (foe === null) return;
 
     const heroAtkDmg = rollDie(hero.damageDie);
-    setFoe({ ...foe, hp: (foe.hp -= heroAtkDmg) });
+    foe.hp -= heroAtkDmg;
+    setFoe({ ...foe, hp: foe.hp });
     let message = `You strike the ${foe.name} for ${heroAtkDmg} damage.`;
 
     if (foe.hp > 0) {
