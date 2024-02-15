@@ -13,6 +13,7 @@
     max-width: 50%;
     border: 4px solid transparent;
     padding: 0.5em;
+    user-select: none;
 
     &:nth-child(odd) {
       background-color: $color-dark-opaque;

@@ -7,6 +7,7 @@
 
   .button {
     cursor: pointer;
+    user-select: none;
     padding: $size-lg 0;
     width: calc(50% - 0.5em);
     font-size: $size-lg;
