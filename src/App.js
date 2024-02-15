@@ -207,7 +207,7 @@ const App = () => {
     setInCombat(true);
     let message = `You encounter a ${foe.name}.`;
 
-    if (rollDie(2) === 1) {
+    if (rollDie(3) === 1) {
       if (hero.isCloaked) {
         message += ` It waits in ambush, but your cloak lets you go unnoticed.`;
         setStatusMessage(message);
@@ -215,6 +215,7 @@ const App = () => {
         return;
       }
       message += ` It ambushes you!`;
+      setStatusMessage(message);
       foeAttack(message);
 
       return;
