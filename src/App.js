@@ -223,7 +223,7 @@ const App = () => {
 
       return;
     }
-    message += ` In your cloak you go unnoticed.`;
+    if (unseen) message += ` In your cloak you go unnoticed.`;
     setStatusMessage(message);
   }
 
