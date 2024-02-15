@@ -9,7 +9,7 @@ import "./App.scss";
 const App = () => {
   const freshHero = {
     name: "Nameless Warrior",
-    level: 20,
+    level: 1,
     xp: 0,
     levelXP: 20,
     hp: 5,
