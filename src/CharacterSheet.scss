@@ -5,9 +5,6 @@
   padding: 1em;
   color: $color-primary;
   font-size: $size-sm;
-  // backdrop-filter: invert(80%);
-  // backdrop-filter: sepia(80%);
-  backdrop-filter: $blur;
   background-color: $color-dark-opaque;
   z-index: 1;
 
@@ -17,7 +14,7 @@
 
     .hero-name {
       font-size: $size-xl;
-      font-family: "Macondo";
+      font-family: "Macondo", serif;
     }
 
     .level-box {
