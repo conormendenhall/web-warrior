@@ -8,11 +8,25 @@
   min-height: 100vh;
   font-size: $size-md;
   background-color: $color-background;
-  color: $color-text;
+  color: $color-primary;
+}
+
+.App::after {
+  position: absolute;
+  background-image: url("../public/film-grain.jpeg");
+  opacity: 0.3;
+  content: "";
+  width: $width;
+  height: 100vh;
+  background-size: $width 100vh;
+  pointer-events: none;
 }
 
 .header {
   margin-bottom: auto;
+  backdrop-filter: $blur;
+  background-color: $color-dark-opaque;
+  z-index: 1;
 
   .name-form {
     padding: 1em;

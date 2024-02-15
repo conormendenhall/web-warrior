@@ -3,9 +3,13 @@
 .character-sheet {
   max-width: $width;
   padding: 1em;
-  color: $color-text;
+  color: $color-primary;
   font-size: $size-sm;
-  background: $gradient;
+  // backdrop-filter: invert(80%);
+  // backdrop-filter: sepia(80%);
+  backdrop-filter: $blur;
+  background-color: $color-dark-opaque;
+  z-index: 1;
 
   .character-header {
     display: flex;
