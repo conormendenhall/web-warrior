@@ -133,6 +133,7 @@ const App = () => {
   const [hero, setHero] = useState(freshHero);
   const [foe, setFoe] = useState(getRandomFoe);
   const [dead, setDead] = useState(false);
+  const [unseen, setUnseen] = useState(hero.isCloaked);
 
   function rollDie(sides) {
     return Math.floor(Math.random() * sides) + 1;
@@ -188,7 +189,7 @@ const App = () => {
     hero.levelXP += Math.floor(hero.levelXP / 4);
     hero.maxHP += 3;
     hero.hp = hero.maxHP;
-    
+
     return hero.level++;
   }
 
@@ -207,9 +208,11 @@ const App = () => {
     setInCombat(true);
     let message = `You encounter a ${foe.name}.`;
 
+    if (hero.hp < hero.maxHP) setHero({ ...hero, isRested: false });
+
     if (rollDie(3) === 1) {
       if (hero.isCloaked) {
-        message += ` It waits in ambush, but your cloak lets you go unnoticed.`;
+        message += ` It waits in ambush, but in your cloak you go unnoticed.`;
         setStatusMessage(message);
 
         return;
@@ -220,12 +223,18 @@ const App = () => {
 
       return;
     }
+    message += ` In your cloak you go unnoticed.`;
     setStatusMessage(message);
   }
 
-  function handleAttack() {
-    if (foe === null) return;
+  const handleSneak = () => {
+    setStatusMessage(`You sneak past the ${foe.name}.`);
+    setInCombat(false);
+    setFoe(getRandomFoe());
+  };
 
+  function handleAttack() {
+    setUnseen(false);
     const heroAtkDmg = rollDie(hero.damageDie);
     foe.hp -= heroAtkDmg;
     setFoe({ ...foe, hp: foe.hp });
@@ -243,10 +252,14 @@ const App = () => {
         levelUp(hero);
         victoryMessage += ` ${hero.name} reached level ${hero.level}!`;
       }
-      setStatusMessage(victoryMessage);
+
+      if (hero.hp < hero.maxHP) hero.isRested = false;
       setHero({ ...hero });
+      setStatusMessage(victoryMessage);
       setInCombat(false);
       setFoe(getRandomFoe());
+
+      if (hero.isCloaked) setUnseen(true);
     }
   }
 
@@ -329,11 +342,13 @@ const App = () => {
         isRested={hero.isRested}
         named={named}
         trading={trading}
+        unseen={unseen}
         handleResurrection={handleResurrection}
         handleAttack={handleAttack}
         handleEmbark={handleEmbark}
         handleRest={handleRest}
         handleTrade={handleTrade}
+        handleSneak={handleSneak}
       />
     </div>
   );

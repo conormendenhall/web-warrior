@@ -6,11 +6,13 @@ export const ActionButtons = ({
   isRested,
   named,
   trading,
+  unseen,
   handleResurrection,
   handleAttack,
   handleEmbark,
   handleRest,
   handleTrade,
+  handleSneak,
 }) => {
   let text;
   let handler;
@@ -39,6 +41,11 @@ export const ActionButtons = ({
       {named && !dead && !inCombat && !trading && (
         <div className="button" onClick={handleTrade}>
           Trade
+        </div>
+      )}
+      {unseen && inCombat && (
+        <div className="button" onClick={handleSneak}>
+          Sneak Past
         </div>
       )}
     </div>
