@@ -6,11 +6,12 @@
   flex-direction: column;
   flex-wrap: wrap;
   max-height: 15em;
+  max-width: $width;
 
   .item {
     display: flex;
     justify-content: space-between;
-    max-width: 50%;
+    max-width: 46%;
     border: 4px solid transparent;
     padding: 0.5em;
     user-select: none;
