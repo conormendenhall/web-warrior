@@ -5,6 +5,7 @@ export const MerchantInventory = ({ inventory, heroGold, handlePurchase }) => {
     <div
       key={item.name}
       onClick={() => handlePurchase(item)}
+      role="button"
       className={"item" + (heroGold < item.price ? " disabled" : "")}
     >
       <span>{item.name}</span>
