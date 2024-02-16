@@ -5,7 +5,7 @@
   flex-direction: column;
   max-width: $width;
   margin: auto;
-  min-height: 100vh;
+  height: 100vh;
   font-size: $size-md;
   background-color: $color-background;
   color: $color-primary;
@@ -15,7 +15,7 @@
     background-image: url("../public/film-grain.jpeg");
     opacity: 0.3;
     content: "";
-    max-width: $width;
+    min-width: $width;
     height: 100vh;
     background-size: $width 100vh;
     pointer-events: none;

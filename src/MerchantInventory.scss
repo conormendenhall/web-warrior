@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  max-height: 15em;
+  max-height: 25em;
   max-width: $width;
 
   .item {
@@ -13,7 +13,7 @@
     justify-content: space-between;
     max-width: 46%;
     border: 4px solid transparent;
-    padding: 0.5em;
+    padding: 1.5em .5em;
     user-select: none;
 
     &:nth-child(odd) {
