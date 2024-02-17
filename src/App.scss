@@ -10,12 +10,12 @@
   background-color: $color-background;
   color: $color-primary;
 
-  &::after {
+  &::before {
     position: absolute;
     background-image: url("../public/film-grain.jpeg");
     opacity: 0.3;
     content: "";
-    width: 100%;
+    width: $width;
     height: 100vh;
     background-size: $width 100vh;
     pointer-events: none;

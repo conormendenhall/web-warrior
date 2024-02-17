@@ -20,9 +20,25 @@ export const CharacterSheet = ({ creature }) => {
       <div className="character-body">
         {creature.equipment?.length > 0 && (
           <div className="equipment">
-            {creature.equipment.map((item) => (
-              <div key={item.name}>{item.name}</div>
-            ))}
+            {creature.equipment.map((item) => {
+              let tooltipText = "";
+              if (item.damageDie) {
+                tooltipText = `d${item.damageDie} damage`;
+              } else if (item.armorDie) {
+                tooltipText = `d${item.armorDie} armor`;
+              } else if (item.deflectDie) {
+                tooltipText = `1 in ${item.deflectDie} chance to deflect`;
+              } else if (item.isCloaked) {
+                tooltipText = "stealth";
+              }
+
+              return (
+                <div key={item.name} className="item tooltip">
+                  {item.name}
+                  <span class="tooltip-text">{tooltipText}</span>
+                </div>
+              );
+            })}
           </div>
         )}
         <div className="status">

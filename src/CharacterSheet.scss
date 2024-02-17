@@ -49,6 +49,33 @@
     justify-content: space-between;
     padding-top: 0.5em;
 
+    .equipment {
+      .item {
+        position: relative;
+        padding: 0 0.25em;
+        user-select: none;
+
+        &:hover {
+          background-color: $color-dark-opaque;
+
+          .tooltip-text {
+            visibility: visible;
+          }
+        }
+
+        .tooltip-text {
+          visibility: hidden;
+          position: absolute;
+          top: 0;
+          left: 100%;
+          width: 100%;
+          padding: 0 0.25em;
+          background-color: $color-dark-opaque;
+          text-align: center;
+        }
+      }
+    }
+
     .status {
       margin-left: auto;
       text-align: end;
