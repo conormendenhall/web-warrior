@@ -1,4 +1,5 @@
 import { Health } from "./Health";
+import { ItemDescription } from "./items";
 
 import "./CharacterSheet.scss";
 
@@ -9,7 +10,7 @@ export const CharacterSheet = ({ creature }) => {
         <div className="hero-name">{creature.name}</div>
         <div className="level-box">
           <div>Level {creature.level}</div>
-          {creature.xp >= 0 && creature.levelXP >= 0 && (
+          {creature.levelXP > 0 && (
             <div>
               {creature.xp} / {creature.levelXP} XP
             </div>
@@ -21,16 +22,7 @@ export const CharacterSheet = ({ creature }) => {
         {creature.equipment?.length > 0 && (
           <div className="equipment">
             {creature.equipment.map((item) => {
-              let tooltipText = "";
-              if (item.damageDie) {
-                tooltipText = `d${item.damageDie} damage`;
-              } else if (item.armorDie) {
-                tooltipText = `d${item.armorDie} armor`;
-              } else if (item.deflectDie) {
-                tooltipText = `1 in ${item.deflectDie} chance to deflect`;
-              } else if (item.isCloaked) {
-                tooltipText = "stealth";
-              }
+              const tooltipText = ItemDescription(item);
 
               return (
                 <div key={item.name} className="item tooltip">

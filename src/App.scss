@@ -10,17 +10,6 @@
   background-color: $color-background;
   color: $color-primary;
 
-  &::before {
-    position: absolute;
-    background-image: url("../public/film-grain.jpeg");
-    opacity: 0.3;
-    content: "";
-    width: $width;
-    height: 100vh;
-    background-size: $width 100vh;
-    pointer-events: none;
-  }
-
   button,
   input,
   select,
@@ -39,7 +28,7 @@
     }
 
     .status-message {
-      font-size: $size-md;
+      font-size: $size-sm;
       padding: 0 1em;
     }
   }

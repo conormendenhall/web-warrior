@@ -1,6 +1,7 @@
+@import "./variables";
+
 body {
   margin: 0;
-  background-color: hsl(39, 59%, 9%);
   font-family: "Roboto Slab", -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
     "Helvetica Neue", sans-serif;
@@ -9,9 +10,28 @@ body {
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  @keyframes white-black-shift {
+    from {
+      background-color: #fff;
+    }
+    to {
+      background-color: #000;
+    }
+  }
+
+  &::after {
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    transform: rotate(180deg);
+    background-image: url("../public/film-grain.jpeg");
+    background-size: 100% 100%;
+    background-blend-mode: difference;
+    content: "";
+    pointer-events: none;
+    animation: white-black-shift 120s infinite linear alternate;
+  }
 }

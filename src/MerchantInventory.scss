@@ -5,16 +5,17 @@
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  max-height: 25em;
-  max-width: $width;
+  max-height: 22em;
 
   .item {
     display: flex;
     justify-content: space-between;
-    max-width: 46%;
+    padding: 0.5em;
+    height: 2.5em;
+    width: 44vw;
     border: 4px solid transparent;
-    padding: 1em .5em;
     user-select: none;
+    font-size: $size-xs;
 
     &:nth-child(odd) {
       background-color: $color-dark-opaque;
@@ -28,6 +29,19 @@
 
     &.disabled {
       color: $color-disabled;
+
+      .info .description {
+        visibility: hidden;
+      }
+    }
+
+    .info {
+      text-align: end;
+
+      .description {
+        visibility: visible;
+        font-size: $size-xs;
+      }
     }
   }
 }

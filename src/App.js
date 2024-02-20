@@ -3,147 +3,33 @@ import { useState } from "react";
 import { ActionButtons } from "./ActionButtons";
 import { CharacterSheet } from "./CharacterSheet";
 import { MerchantInventory } from "./MerchantInventory";
+import { Foes } from "./foes";
+import { FreshHero } from "./hero";
+import { FreshInventory } from "./items";
 
 import "./App.scss";
 
 const App = () => {
-  const freshHero = {
-    name: "Nameless Warrior",
-    level: 1,
-    xp: 0,
-    levelXP: 20,
-    hp: 5,
-    maxHP: 5,
-    damageDie: 5,
-    armorDie: 0,
-    deflectDie: 0,
-    isCloaked: false,
-    isRested: true,
-    gold: 0,
-    equipment: [],
-    felledFoes: 0,
-  };
-  const foes = [
-    {
-      name: "Goblin",
-      level: 1,
-      hp: 4,
-      maxHP: 4,
-      damageDie: 3,
-    },
-    { name: "Skeleton", level: 2, hp: 5, maxHP: 5, damageDie: 5 },
-    { name: "Brigand", level: 3, hp: 8, maxHP: 8, damageDie: 6 },
-    { name: "Cultist", level: 3, hp: 6, maxHP: 6, damageDie: 8 },
-    { name: "Hag", level: 4, hp: 8, maxHP: 8, damageDie: 9 },
-    { name: "Manticore", level: 5, hp: 12, maxHP: 12, damageDie: 8 },
-    {
-      name: "Bog Shambler",
-      level: 5,
-      hp: 14,
-      maxHP: 14,
-      damageDie: 6,
-    },
-    {
-      name: "Cyclops",
-      level: 6,
-      hp: 13,
-      maxHP: 13,
-      damageDie: 10,
-    },
-    {
-      name: "Demonoid",
-      level: 6,
-      hp: 9,
-      maxHP: 9,
-      damageDie: 14,
-    },
-    { name: "Warlock", level: 7, hp: 11, maxHP: 11, damageDie: 15 },
-    { name: "Vampire", level: 7, hp: 13, maxHP: 13, damageDie: 13 },
-    { name: "Lich", level: 8, hp: 16, maxHP: 16, damageDie: 13 },
-    { name: "Wyvern", level: 9, hp: 16, maxHP: 16, damageDie: 16 },
-    {
-      name: "Leviathan",
-      level: 100,
-      hp: 50,
-      maxHP: 50,
-      damageDie: 35,
-    },
-  ];
-  const freshInventory = [
-    {
-      name: "Shield",
-      price: 8,
-      message: "Ah, the trusty shield. May it guard you well.",
-      deflectDie: 5,
-    },
-    {
-      name: "Leather Armor",
-      price: 10,
-      message: "You think this will protect you? Good luck.",
-      armorDie: 4,
-    },
-    {
-      name: "Morning Star",
-      price: 12,
-      message: "So, you lust for blood. Heh heh...",
-      damageDie: 8,
-    },
-    {
-      name: "Chain Mail",
-      price: 14,
-      message: "See these links? They may save your hide.",
-      armorDie: 6,
-    },
-    {
-      name: "Claymore",
-      price: 16,
-      message: "Strike true, warrior.",
-      damageDie: 10,
-    },
-    {
-      name: "Scale Armor",
-      price: 16,
-      message: "Ah, look how it shimmers. Heh...",
-      armorDie: 8,
-    },
-    {
-      name: "Lucerne",
-      price: 18,
-      message: "Be careful where you swing that thing.",
-      damageDie: 12,
-    },
-    {
-      name: "Plate Armor",
-      price: 20,
-      message: "This steel is nigh impenetrable.",
-      armorDie: 10,
-    },
-    {
-      name: "Cloak of Invisibility",
-      price: 40,
-      message: "I wonder, what will you do when no one can see you?",
-      isCloaked: true,
-    },
-  ];
   const [statusMessage, setStatusMessage] = useState("What is your name?");
-  const [named, setNamed] = useState(false);
+  const [isNamed, setIsNamed] = useState(false);
   const [inCombat, setInCombat] = useState(false);
   const [trading, setTrading] = useState(false);
-  const [merchantInventory, setMerchantInventory] = useState(freshInventory);
-  const [hero, setHero] = useState(freshHero);
-  const [foe, setFoe] = useState(getRandomFoe);
-  const [dead, setDead] = useState(false);
-  const [unseen, setUnseen] = useState(hero.isCloaked);
+  const [merchantInventory, setMerchantInventory] = useState(FreshInventory);
+  const [hero, setHero] = useState(FreshHero);
+  const [foe, setFoe] = useState(Foes[1]);
+  const [isRested, setIsRested] = useState(true);
+  const [isDead, setIsDead] = useState(false);
+  const [isUnseen, setIsUnseen] = useState(hero.isCloaked);
 
   function rollDie(sides) {
     return Math.floor(Math.random() * sides) + 1;
   }
 
-  function getRandomFoe() {
-    const foesInRange = foes.filter(
-      (foe) => Math.abs(foe.level - hero.level) < 2
+  function getRandomFoe(heroLevel) {
+    const foesInRange = Foes.filter(
+      (foe) => Math.abs(foe.level - heroLevel) < 2
     );
-    let randomFoe = foes[foes.length - 1];
+    let randomFoe = Foes[Foes.length - 1];
     if (foesInRange.length > 0) {
       randomFoe = foesInRange[Math.floor(Math.random() * foesInRange.length)];
     }
@@ -170,32 +56,24 @@ const App = () => {
       setStatusMessage(message);
 
       if (hero.hp - foeAtkDmg > 0) {
-        hero.hp -= foeAtkDmg;
-        setHero({ ...hero, hp: hero.hp, isRested: false });
+        setHero({ ...hero, hp: hero.hp - foeAtkDmg });
+
+        if (hero.hp - foeAtkDmg < hero.maxHP) setIsRested(false);
       } else {
         setHero({ ...hero, hp: 0 });
-        setDead(true);
+        setIsDead(true);
         setInCombat(false);
         message += ` You fall dead before the ${foe.name}. Rest in Peace, ${hero.name}`;
         setStatusMessage(message);
-        setFoe(getRandomFoe());
-        setMerchantInventory(freshInventory);
+        setFoe(getRandomFoe(1));
+        setMerchantInventory(FreshInventory);
       }
     }
   }
 
-  function levelUp(hero) {
-    hero.xp -= hero.levelXP;
-    hero.levelXP += Math.floor(hero.levelXP / 4);
-    hero.maxHP += 3;
-    hero.hp = hero.maxHP;
-
-    return hero.level++;
-  }
-
   function handleSubmitName(e) {
     e.preventDefault();
-    setNamed(true);
+    setIsNamed(true);
     setStatusMessage(`Well met, ${hero.name}.`);
   }
 
@@ -207,8 +85,6 @@ const App = () => {
     setTrading(false);
     setInCombat(true);
     let message = `You encounter a ${foe.name}.`;
-
-    if (hero.hp < hero.maxHP) setHero({ ...hero, isRested: false });
 
     if (rollDie(3) === 1) {
       if (hero.isCloaked) {
@@ -223,43 +99,63 @@ const App = () => {
 
       return;
     }
-    if (unseen) message += ` In your cloak you go unnoticed.`;
+    if (isUnseen) message += ` In your cloak you go unnoticed.`;
     setStatusMessage(message);
   }
 
   const handleSneak = () => {
     setStatusMessage(`You sneak past the ${foe.name}.`);
     setInCombat(false);
-    setFoe(getRandomFoe());
+    setFoe(getRandomFoe(hero.level));
+    
+    if (hero.hp < hero.maxHP) setIsRested(false);
   };
 
   function handleAttack() {
-    setUnseen(false);
+    setIsUnseen(false);
     const heroAtkDmg = rollDie(hero.damageDie);
-    foe.hp -= heroAtkDmg;
-    setFoe({ ...foe, hp: foe.hp });
+    const newFoeHP = foe.hp - heroAtkDmg;
+    setFoe({ ...foe, hp: newFoeHP });
     let message = `You strike the ${foe.name} for ${heroAtkDmg} damage.`;
 
-    if (foe.hp > 0) {
+    if (newFoeHP > 0) {
       foeAttack(message);
     } else {
       let victoryMessage = `You strike the ${foe.name} for ${heroAtkDmg} damage, and it falls dead at your feet.`;
-      hero.felledFoes++;
-      hero.xp += foe.maxHP + foe.damageDie;
-      hero.gold += rollDie(foe.maxHP + foe.damageDie);
+      let newXP = hero.xp + foe.maxHP + foe.damageDie;
+      let newLevelXP = hero.levelXP;
+      let newMaxHP = hero.maxHP;
+      let newHP = hero.hp;
+      let newLevel = hero.level;
+      const loot = rollDie(foe.maxHP + foe.damageDie);
+      victoryMessage += ` You loot it for ${loot} gold.`;
 
-      if (hero.xp > hero.levelXP) {
-        levelUp(hero);
-        victoryMessage += ` ${hero.name} reached level ${hero.level}!`;
+      if (newXP >= hero.levelXP) {
+        newXP -= hero.levelXP;
+        newLevelXP = hero.levelXP + Math.floor(hero.levelXP / 4);
+        newMaxHP = hero.maxHP + 3;
+        newHP = newMaxHP;
+        newLevel = hero.level + 1;
+        victoryMessage += ` ${hero.name} reached level ${hero.level + 1}!`;
+        setIsRested(true);
       }
 
-      if (hero.hp < hero.maxHP) hero.isRested = false;
-      setHero({ ...hero });
+      setHero({
+        ...hero,
+        felledFoes: hero.felledFoes + 1,
+        xp: newXP,
+        levelXP: newLevelXP,
+        maxHP: newMaxHP,
+        hp: newHP,
+        level: newLevel,
+        gold: hero.gold + loot,
+      });
+
       setStatusMessage(victoryMessage);
       setInCombat(false);
-      setFoe(getRandomFoe());
+      setFoe(getRandomFoe(newLevel));
 
-      if (hero.isCloaked) setUnseen(true);
+      if (hero.isCloaked) setIsUnseen(true);
     }
   }
 
@@ -278,10 +174,9 @@ const App = () => {
       const newArmorDie = selection.armorDie ?? hero.armorDie;
       const newDeflectDie = selection.deflectDie ?? hero.deflectDie;
       const newIsCloaked = selection.isCloaked ?? hero.isCloaked;
-      hero.gold -= selection.price;
       setHero({
         ...hero,
-        gold: hero.gold,
+        gold: hero.gold - selection.price,
         damageDie: newDmgDie,
         armorDie: newArmorDie,
         deflectDie: newDeflectDie,
@@ -300,23 +195,24 @@ const App = () => {
     setHero({
       ...hero,
       hp: Math.min(hero.hp + restPoints, hero.maxHP),
-      isRested: true,
     });
+    setIsRested(true);
     setStatusMessage(`You rest for ${restPoints} HP.`);
   }
 
   function handleResurrection() {
     setStatusMessage("Hello again, warrior.");
-    setHero({ ...freshHero, name: hero.name });
-    setDead(false);
+    setHero({ ...FreshHero, name: hero.name });
+    setIsDead(false);
+    setIsRested(true);
   }
 
   return (
     <div className="App">
       <div className="header">
-        {named && <CharacterSheet creature={hero} />}
+        {isNamed && <CharacterSheet creature={hero} />}
         <p className="status-message">{statusMessage}</p>
-        {!named && (
+        {!isNamed && (
           <form onSubmit={handleSubmitName} className="name-form">
             <input
               defaultValue="Nameless Warrior"
@@ -337,12 +233,12 @@ const App = () => {
       </div>
       {inCombat && <CharacterSheet creature={foe} />}
       <ActionButtons
-        dead={dead}
+        dead={isDead}
         inCombat={inCombat}
-        isRested={hero.isRested}
-        named={named}
+        isRested={isRested}
+        named={isNamed}
         trading={trading}
-        unseen={unseen}
+        unseen={isUnseen}
         handleResurrection={handleResurrection}
         handleAttack={handleAttack}
         handleEmbark={handleEmbark}
