@@ -30,8 +30,10 @@
     &.disabled {
       color: $color-disabled;
 
-      .info .description {
-        visibility: hidden;
+      &:not(.inferior) {
+        .info .description {
+          visibility: hidden;
+        }
       }
     }
 

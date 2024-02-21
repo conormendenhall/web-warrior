@@ -49,23 +49,23 @@ export const FreshInventory = [
   },
   {
     name: "Cloak of Invisibility",
-    price: 200,
+    price: 100,
     isCloaked: true,
     message: "I wonder, what will you do when no one can see you?",
   },
 ];
 
 export function ItemDescription(item) {
-  let tooltipText = "";
+  let description = "";
 
   if (item.damageDie) {
-    tooltipText = `d${item.damageDie} damage`;
+    description = `d${item.damageDie} damage`;
   } else if (item.armorDie) {
-    tooltipText = `d${item.armorDie} armor`;
+    description = `d${item.armorDie} armor`;
   } else if (item.deflectDie) {
-    tooltipText = `d${item.deflectDie} deflect`;
+    description = `d${item.deflectDie} deflect`;
   } else if (item.isCloaked) {
-    tooltipText = "stealth";
+    description = "stealth";
   }
-  return tooltipText;
+  return description;
 }

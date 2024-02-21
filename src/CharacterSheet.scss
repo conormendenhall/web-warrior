@@ -49,32 +49,11 @@
     justify-content: space-between;
     padding-top: 0.5em;
 
-    .equipment {
-      .item {
-        position: relative;
-        padding: 0 0.25em;
-        user-select: none;
-
-        .tooltip {
-          visibility: hidden;
-          padding-left: 1em;
-        }
-
-        &:hover {
-          background-color: $color-dark-opaque;
-
-          .tooltip {
-            visibility: visible;
-          }
-        }
-      }
-    }
-
     .status {
       margin-left: auto;
       text-align: end;
 
-      .felled-foes {
+      .foes-felled {
         position: relative;
         user-select: none;
 

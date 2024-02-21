@@ -11,5 +11,5 @@ export const FreshHero = {
   isCloaked: false,
   gold: 0,
   equipment: [],
-  felledFoes: [],
+  foesFelled: [],
 };

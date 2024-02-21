@@ -56,4 +56,11 @@
       }
     }
   }
+
+  .foes-felled {
+    margin: auto;
+    flex-grow: 1;
+    text-align: right;
+    font-size: $size-sm;
+  }
 }

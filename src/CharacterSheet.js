@@ -1,6 +1,6 @@
 import { Health } from "./Health";
-import { ItemDescription } from "./items";
-import { FelledFoes } from "./FelledFoes";
+import { Equipment } from "./Equipment";
+import { FoesFelled } from "./FoesFelled";
 
 import "./CharacterSheet.scss";
 
@@ -21,27 +21,12 @@ export const CharacterSheet = ({ creature }) => {
       <Health hp={creature.hp} maxHP={creature.maxHP} />
       <div className="character-body">
         {creature.equipment?.length > 0 && (
-          <div className="equipment">
-            {creature.equipment.map((item) => {
-              const tooltipText = ItemDescription(item);
-
-              return (
-                <div key={item.name} className="item">
-                  {item.name}
-                  <span className="tooltip">{tooltipText}</span>
-                </div>
-              );
-            })}
-          </div>
+          <Equipment equipment={creature.equipment} />
         )}
         <div className="status">
-          <div>Damage: d{creature.damageDie}</div>
-          {creature.armorDie > 0 && <div>Armor: d{creature.armorDie}</div>}
-          {creature.deflectDie > 0 && <div>Shield: d{creature.deflectDie}</div>}
-          {creature.isCloaked > 0 && <div>Cloaked</div>}
           {creature.gold >= 0 && <div>Gold: {creature.gold}</div>}
-          {creature.felledFoes && (
-            <FelledFoes felledFoes={creature.felledFoes} />
+          {creature.foesFelled && (
+            <FoesFelled foesFelled={creature.foesFelled} />
           )}
         </div>
       </div>

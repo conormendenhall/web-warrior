@@ -6,6 +6,7 @@ import { MerchantInventory } from "./MerchantInventory";
 import { Foes } from "./foes";
 import { FreshHero } from "./hero";
 import { FreshInventory } from "./items";
+import { FoesFelled } from "./FoesFelled";
 
 import "./App.scss";
 
@@ -139,11 +140,11 @@ const App = () => {
         victoryMessage += ` ${hero.name} reached level ${hero.level + 1}!`;
         setIsRested(true);
       }
-      hero.felledFoes.push(foe);
+      hero.foesFelled.push(foe);
 
       setHero({
         ...hero,
-        felledFoes: hero.felledFoes,
+        foesFelled: hero.foesFelled,
         xp: newXP,
         levelXP: newLevelXP,
         maxHP: newMaxHP,
@@ -174,6 +175,16 @@ const App = () => {
       const newArmorDie = selection.armorDie ?? hero.armorDie;
       const newDeflectDie = selection.deflectDie ?? hero.deflectDie;
       const newIsCloaked = selection.isCloaked ?? hero.isCloaked;
+      selection.equipped = true;
+      hero.equipment.forEach((item) => {
+        if (
+          (item.armorDie && selection.armorDie) ||
+          (item.damageDie && selection.damageDie) ||
+          (item.deflectDie && selection.deflectDie)
+        ) {
+          item.equipped = false;
+        }
+      });
       setHero({
         ...hero,
         gold: hero.gold - selection.price,
@@ -202,7 +213,7 @@ const App = () => {
 
   function handleResurrection() {
     setStatusMessage("Hello again, warrior.");
-    setHero({ ...FreshHero, felledFoes: [], name: hero.name });
+    setHero({ ...FreshHero, foesFelled: [], name: hero.name });
     setIsDead(false);
     setIsRested(true);
   }
@@ -212,13 +223,6 @@ const App = () => {
       <div className="header">
         {isNamed && <CharacterSheet creature={hero} />}
         <p className="status-message">{statusMessage}</p>
-        {isDead && (
-          <div className="button-section">
-            <div className="button" onClick={handleResurrection}>
-              Rise Again
-            </div>
-          </div>
-        )}
         {!isNamed && (
           <form onSubmit={handleSubmitName} className="name-form">
             <input
@@ -230,10 +234,17 @@ const App = () => {
             </button>
           </form>
         )}
+        {isDead && (
+          <div className="button-section">
+            <div className="button" onClick={handleResurrection}>
+              Rise Again
+            </div>
+          </div>
+        )}
         {trading && (
           <MerchantInventory
             inventory={merchantInventory}
-            heroGold={hero.gold}
+            hero={hero}
             handlePurchase={handlePurchase}
           />
         )}
@@ -252,6 +263,7 @@ const App = () => {
         handleTrade={handleTrade}
         handleSneak={handleSneak}
       />
+      {isDead && <FoesFelled foesFelled={hero.foesFelled} />}
     </div>
   );
 };
