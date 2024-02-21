@@ -1,5 +1,6 @@
 import { Health } from "./Health";
 import { ItemDescription } from "./items";
+import { FelledFoes } from "./FelledFoes";
 
 import "./CharacterSheet.scss";
 
@@ -25,9 +26,9 @@ export const CharacterSheet = ({ creature }) => {
               const tooltipText = ItemDescription(item);
 
               return (
-                <div key={item.name} className="item tooltip">
+                <div key={item.name} className="item">
                   {item.name}
-                  <span class="tooltip-text">{tooltipText}</span>
+                  <span className="tooltip">{tooltipText}</span>
                 </div>
               );
             })}
@@ -39,8 +40,8 @@ export const CharacterSheet = ({ creature }) => {
           {creature.deflectDie > 0 && <div>Shield: d{creature.deflectDie}</div>}
           {creature.isCloaked > 0 && <div>Cloaked</div>}
           {creature.gold >= 0 && <div>Gold: {creature.gold}</div>}
-          {creature.felledFoes >= 0 && (
-            <div>Foes Felled: {creature.felledFoes}</div>
+          {creature.felledFoes && (
+            <FelledFoes felledFoes={creature.felledFoes} />
           )}
         </div>
       </div>

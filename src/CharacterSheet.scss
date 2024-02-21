@@ -55,7 +55,7 @@
         padding: 0 0.25em;
         user-select: none;
 
-        .tooltip-text {
+        .tooltip {
           visibility: hidden;
           padding-left: 1em;
         }
@@ -63,7 +63,7 @@
         &:hover {
           background-color: $color-dark-opaque;
 
-          .tooltip-text {
+          .tooltip {
             visibility: visible;
           }
         }
@@ -73,6 +73,25 @@
     .status {
       margin-left: auto;
       text-align: end;
+
+      .felled-foes {
+        position: relative;
+        user-select: none;
+
+        &:hover .foes-tooltip {
+          display: block;
+        }
+
+        .foes-tooltip {
+          display: none;
+          width: 15em;
+          position: absolute;
+          top: 2em;
+          right: 0;
+          text-align: right;
+          background-color: $color-background;
+        }
+      }
     }
   }
 }

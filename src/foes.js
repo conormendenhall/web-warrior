@@ -6,7 +6,8 @@ export const Foes = [
     maxHP: 4,
     damageDie: 3,
   },
-  { name: "Skeleton", level: 2, hp: 5, maxHP: 5, damageDie: 5 },
+  { name: "Skeleton", level: 2, hp: 5, maxHP: 5, damageDie: 4 },
+  { name: "Carnivorous Ooze", level: 2, hp: 6, maxHP: 6, damageDie: 3 },
   { name: "Brigand", level: 3, hp: 8, maxHP: 8, damageDie: 6 },
   { name: "Cultist", level: 3, hp: 6, maxHP: 6, damageDie: 8 },
   { name: "Hag", level: 4, hp: 8, maxHP: 8, damageDie: 9 },
@@ -37,7 +38,6 @@ export const Foes = [
   { name: "Vampire", level: 7, hp: 13, maxHP: 13, damageDie: 13 },
   { name: "Lich", level: 8, hp: 16, maxHP: 16, damageDie: 13 },
   { name: "Drunken Demigod", level: 8, hp: 18, maxHP: 18, damageDie: 14 },
-  { name: "Wyvern", level: 9, hp: 16, maxHP: 16, damageDie: 16 },
   { name: "Wyvern", level: 9, hp: 16, maxHP: 16, damageDie: 16 },
   {
     name: "Leviathan",

@@ -1,13 +1,10 @@
-import "./ActionButtons.scss";
-
 export const ActionButtons = ({
-  dead,
+  isDead,
   inCombat,
   isRested,
   named,
   trading,
   unseen,
-  handleResurrection,
   handleAttack,
   handleEmbark,
   handleRest,
@@ -17,10 +14,7 @@ export const ActionButtons = ({
   let text;
   let handler;
 
-  if (dead) {
-    text = "Rise Again";
-    handler = handleResurrection;
-  } else if (inCombat) {
+  if (inCombat) {
     text = "Attack";
     handler = handleAttack;
   } else if (isRested) {
@@ -32,13 +26,13 @@ export const ActionButtons = ({
   }
 
   return (
-    <div className="action-buttons">
-      {named && (
+    <div className="button-section">
+      {named && !isDead && (
         <div className="button" onClick={handler}>
           {text}
         </div>
       )}
-      {named && !dead && !inCombat && !trading && (
+      {named && !isDead && !inCombat && !trading && (
         <div className="button" onClick={handleTrade}>
           Trade
         </div>

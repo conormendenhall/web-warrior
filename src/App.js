@@ -107,7 +107,7 @@ const App = () => {
     setStatusMessage(`You sneak past the ${foe.name}.`);
     setInCombat(false);
     setFoe(getRandomFoe(hero.level));
-    
+
     if (hero.hp < hero.maxHP) setIsRested(false);
   };
 
@@ -132,17 +132,18 @@ const App = () => {
 
       if (newXP >= hero.levelXP) {
         newXP -= hero.levelXP;
-        newLevelXP = hero.levelXP + Math.floor(hero.levelXP / 4);
+        newLevelXP = hero.levelXP + Math.floor(hero.levelXP / 2);
         newMaxHP = hero.maxHP + 3;
         newHP = newMaxHP;
         newLevel = hero.level + 1;
         victoryMessage += ` ${hero.name} reached level ${hero.level + 1}!`;
         setIsRested(true);
       }
+      hero.felledFoes.push(foe);
 
       setHero({
         ...hero,
-        felledFoes: hero.felledFoes + 1,
+        felledFoes: hero.felledFoes,
         xp: newXP,
         levelXP: newLevelXP,
         maxHP: newMaxHP,
@@ -150,7 +151,6 @@ const App = () => {
         level: newLevel,
         gold: hero.gold + loot,
       });
-
       setStatusMessage(victoryMessage);
       setInCombat(false);
       setFoe(getRandomFoe(newLevel));
@@ -202,7 +202,7 @@ const App = () => {
 
   function handleResurrection() {
     setStatusMessage("Hello again, warrior.");
-    setHero({ ...FreshHero, name: hero.name });
+    setHero({ ...FreshHero, felledFoes: [], name: hero.name });
     setIsDead(false);
     setIsRested(true);
   }
@@ -212,6 +212,13 @@ const App = () => {
       <div className="header">
         {isNamed && <CharacterSheet creature={hero} />}
         <p className="status-message">{statusMessage}</p>
+        {isDead && (
+          <div className="button-section">
+            <div className="button" onClick={handleResurrection}>
+              Rise Again
+            </div>
+          </div>
+        )}
         {!isNamed && (
           <form onSubmit={handleSubmitName} className="name-form">
             <input
@@ -233,13 +240,12 @@ const App = () => {
       </div>
       {inCombat && <CharacterSheet creature={foe} />}
       <ActionButtons
-        dead={isDead}
+        isDead={isDead}
         inCombat={inCombat}
         isRested={isRested}
         named={isNamed}
         trading={trading}
         unseen={isUnseen}
-        handleResurrection={handleResurrection}
         handleAttack={handleAttack}
         handleEmbark={handleEmbark}
         handleRest={handleRest}
