@@ -132,7 +132,7 @@ const App = () => {
 
       if (newXP >= hero.levelXP) {
         newXP -= hero.levelXP;
-        newLevelXP = hero.levelXP + Math.floor(hero.levelXP / 2);
+        newLevelXP = hero.levelXP + Math.floor(hero.levelXP / 3);
         newMaxHP = hero.maxHP + 3;
         newHP = newMaxHP;
         newLevel = hero.level + 1;
