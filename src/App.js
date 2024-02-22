@@ -226,10 +226,10 @@ const App = () => {
         {!isNamed && (
           <form onSubmit={handleSubmitName} className="name-form">
             <input
-              defaultValue="Nameless Warrior"
+              placeholder="Nameless Warrior"
               onChange={handleChangeName}
             />
-            <button className="button" disabled={hero.name.length === 0}>
+            <button className="button" disabled={hero.name.trim().length === 0}>
               Submit
             </button>
           </form>
