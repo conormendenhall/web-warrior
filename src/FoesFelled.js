@@ -1,10 +1,12 @@
 import { Foes } from "./foes";
 
-export const FoesFelled = ({ foesFelled }) => {
+import "./FoesFelled.scss";
+
+export const FoesFelled = ({ foesFelled, hidden }) => {
   return (
-    <div className="foes-felled">
+    <div className={`foes-felled${hidden ? " hidden" : ""}`}>
       Foes Felled: {foesFelled.length}
-      <div className="foes-tooltip">
+      <div className="foes-list">
         {Foes.map((foeType) => {
           const count = foesFelled.filter(
             (foe) => foe.name === foeType.name
@@ -13,8 +15,9 @@ export const FoesFelled = ({ foesFelled }) => {
 
           return (
             count > 0 && (
-              <div key={foeType.name}>
-                {foeType.name}: {count}
+              <div className="foe-type" key={foeType.name}>
+                <span>{foeType.name}: </span>
+                <span>{count}</span>
               </div>
             )
           );

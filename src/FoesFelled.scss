@@ -1,0 +1,33 @@
+@import "./variables";
+
+.foes-felled {
+  position: relative;
+  user-select: none;
+
+  &.hidden .foes-list {
+    display: none;
+  }
+
+  &.hidden:hover .foes-list {
+    display: block;
+  }
+
+  .foes-list {
+    width: 15em;
+    position: absolute;
+    top: 2em;
+    right: 0;
+    text-align: right;
+    background-color: $color-background;
+
+    .foe-type {
+      display: flex;
+      justify-content: space-between;
+      padding: .125em .5em;
+
+      &:nth-child(odd) {
+        background-color: $color-dark-opaque;
+      }
+    }
+  }
+}

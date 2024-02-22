@@ -26,7 +26,7 @@ export const CharacterSheet = ({ creature }) => {
         <div className="status">
           {creature.gold >= 0 && <div>Gold: {creature.gold}</div>}
           {creature.foesFelled && (
-            <FoesFelled foesFelled={creature.foesFelled} />
+            <FoesFelled foesFelled={creature.foesFelled} hidden={true} />
           )}
         </div>
       </div>
