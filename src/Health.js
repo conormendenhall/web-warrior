@@ -1,3 +1,5 @@
+import "./Health.scss";
+
 export const Health = ({ hp, maxHP }) => {
   return (
     <div className="health">
