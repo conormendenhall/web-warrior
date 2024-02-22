@@ -1,26 +1,26 @@
 @import "./variables";
 
 .equipment {
-    .item {
-        position: relative;
-        padding: 0.125em 0.5em;
-        user-select: none;
-        color: $color-disabled;
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
+  .item {
+    position: relative;
+    padding: 0.125em 0.5em;
+    user-select: none;
+    color: $color-disabled;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
 
-        &:nth-child(odd) {
-            background-color: $color-dark-opaque;
-        }
-
-        &.equipped {
-            color: $color-primary;
-        }
-
-        .description {
-            padding-left: 1em;
-            font-size: $size-xs;
-        }
+    &:nth-child(odd) {
+      background-color: $color-dark-opaque;
     }
+
+    &.equipped {
+      color: $color-primary;
+    }
+
+    .description {
+      padding-left: 1em;
+      font-size: $size-xs;
+    }
+  }
 }
