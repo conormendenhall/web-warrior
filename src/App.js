@@ -12,7 +12,7 @@ import { ActionButtons } from "./ActionButtons";
 import "./App.scss";
 
 const App = () => {
-  const [statusMessages, setStatusMessages] = useState([]);
+  const [statusMessages, setStatusMessages] = useState([""]);
   const [isNamed, setIsNamed] = useState(false);
   const [inCombat, setInCombat] = useState(false);
   const [isTrading, setIsTrading] = useState(false);
