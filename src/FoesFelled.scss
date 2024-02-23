@@ -4,26 +4,27 @@
   position: relative;
   user-select: none;
 
-  &.hidden .foes-list {
-    display: none;
-  }
-
-  &.hidden:hover .foes-list {
+  &:hover .foes-list {
     display: block;
   }
 
   .foes-list {
+    display: none;
     width: 12.5em;
     position: absolute;
-    top: 2em;
+    top: 1.5em;
     right: 0;
     text-align: right;
     background-color: $color-background;
 
+    &.show {
+      display: block;
+    }
+
     .foe-type {
       display: flex;
       justify-content: space-between;
-      padding: .125em .5em;
+      padding: 0.125em 0.5em;
 
       &:nth-child(odd) {
         background-color: $color-dark-opaque;

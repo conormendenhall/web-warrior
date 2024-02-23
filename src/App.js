@@ -1,26 +1,34 @@
 import { useState } from "react";
 
-import { ActionButtons } from "./ActionButtons";
-import { CharacterSheet } from "./CharacterSheet";
-import { MerchantInventory } from "./MerchantInventory";
 import { Foes } from "./foes";
 import { FreshHero } from "./hero";
 import { FreshInventory } from "./items";
-import { FoesFelled } from "./FoesFelled";
+
+import { StatusMessages } from "./StatusMessages";
+import { CharacterSheet } from "./CharacterSheet";
+import { MerchantInventory } from "./MerchantInventory";
+import { ActionButtons } from "./ActionButtons";
 
 import "./App.scss";
 
 const App = () => {
-  const [statusMessage, setStatusMessage] = useState("What is your name?");
+  const [statusMessages, setStatusMessages] = useState([]);
   const [isNamed, setIsNamed] = useState(false);
   const [inCombat, setInCombat] = useState(false);
-  const [trading, setTrading] = useState(false);
+  const [isTrading, setIsTrading] = useState(false);
   const [merchantInventory, setMerchantInventory] = useState(FreshInventory);
   const [hero, setHero] = useState(FreshHero);
-  const [foe, setFoe] = useState(Foes[1]);
+  const [foe, setFoe] = useState(Foes[0]);
   const [isRested, setIsRested] = useState(true);
   const [isDead, setIsDead] = useState(false);
   const [isUnseen, setIsUnseen] = useState(hero.isCloaked);
+  const [showFoes, setShowFoes] = useState(false);
+
+  function addStatusMessage(message) {
+    const prunedStatuses = [...statusMessages, message];
+    if (prunedStatuses.length > 2) prunedStatuses.shift();
+    setStatusMessages(prunedStatuses);
+  }
 
   function rollDie(sides) {
     return Math.floor(Math.random() * sides) + 1;
@@ -42,7 +50,7 @@ const App = () => {
 
     if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
       message += ` The ${foe.name} attacks, but you deflect it with your shield.`;
-      setStatusMessage(message);
+      addStatusMessage(message);
     } else {
       message += ` The ${foe.name} strikes.`;
       let foeAtkDmg = rollDie(foe.damageDie);
@@ -54,7 +62,7 @@ const App = () => {
         message += ` Your armor negates ${dmgReduction} damage.`;
       }
       message += ` You take ${foeAtkDmg} damage.`;
-      setStatusMessage(message);
+      addStatusMessage(message);
 
       if (hero.hp - foeAtkDmg > 0) {
         setHero({ ...hero, hp: hero.hp - foeAtkDmg });
@@ -64,8 +72,9 @@ const App = () => {
         setHero({ ...hero, hp: 0 });
         setIsDead(true);
         setInCombat(false);
-        message += ` You fall dead before the ${foe.name}. Rest in Peace, ${hero.name}`;
-        setStatusMessage(message);
+        message += ` You fall dead before the ${foe.name}.`;
+        const rip = `Rest in Peace, ${hero.name}`;
+        setStatusMessages([message, rip]);
         setFoe(getRandomFoe(1));
         setMerchantInventory(FreshInventory);
       }
@@ -75,7 +84,7 @@ const App = () => {
   function handleSubmitName(e) {
     e.preventDefault();
     setIsNamed(true);
-    setStatusMessage(`Well met, ${hero.name}.`);
+    addStatusMessage(`Well met, ${hero.name}.`);
   }
 
   function handleChangeName(e) {
@@ -83,29 +92,29 @@ const App = () => {
   }
 
   function handleEmbark() {
-    setTrading(false);
+    setIsTrading(false);
     setInCombat(true);
     let message = `You encounter a ${foe.name}.`;
 
     if (rollDie(3) === 1) {
       if (hero.isCloaked) {
         message += ` It waits in ambush, but in your cloak you go unnoticed.`;
-        setStatusMessage(message);
+        addStatusMessage(message);
 
         return;
       }
       message += ` It ambushes you!`;
-      setStatusMessage(message);
+      addStatusMessage(message);
       foeAttack(message);
 
       return;
     }
     if (isUnseen) message += ` In your cloak you go unnoticed.`;
-    setStatusMessage(message);
+    addStatusMessage(message);
   }
 
   const handleSneak = () => {
-    setStatusMessage(`You sneak past the ${foe.name}.`);
+    addStatusMessage(`You sneak past the ${foe.name}.`);
     setInCombat(false);
     setFoe(getRandomFoe(hero.level));
 
@@ -137,7 +146,7 @@ const App = () => {
         newMaxHP = hero.maxHP + 3;
         newHP = newMaxHP;
         newLevel = hero.level + 1;
-        victoryMessage += ` ${hero.name} reached level ${hero.level + 1}!`;
+        victoryMessage += ` ${hero.name} reached level ${newLevel}!`;
         setIsRested(true);
       }
       hero.foesFelled.push(foe);
@@ -152,7 +161,7 @@ const App = () => {
         level: newLevel,
         gold: hero.gold + loot,
       });
-      setStatusMessage(victoryMessage);
+      addStatusMessage(victoryMessage);
       setInCombat(false);
       setFoe(getRandomFoe(newLevel));
 
@@ -161,12 +170,7 @@ const App = () => {
   }
 
   function handleTrade() {
-    setTrading(true);
-    const message =
-      merchantInventory.length > 0
-        ? "Hello, weary traveler. See anything you like?"
-        : "You've cleaned me out. I must head back to town to restock the caravan.";
-    setStatusMessage(message);
+    setIsTrading(true);
   }
 
   function handlePurchase(selection) {
@@ -197,7 +201,7 @@ const App = () => {
       setMerchantInventory(
         merchantInventory.filter((item) => item.name !== selection.name)
       );
-      setStatusMessage(selection.message);
+      addStatusMessage(selection.message);
     }
   }
 
@@ -208,12 +212,18 @@ const App = () => {
       hp: Math.min(hero.hp + restPoints, hero.maxHP),
     });
     setIsRested(true);
-    setStatusMessage(`You rest for ${restPoints} HP.`);
+    addStatusMessage(`You rest for ${restPoints} HP.`);
+  }
+
+  function handleShowDeath() {
+    setShowFoes(true);
+    setStatusMessages([]);
   }
 
   function handleResurrection() {
-    setStatusMessage("Hello again, warrior.");
+    setStatusMessages(["Hello again, warrior."]);
     setHero({ ...FreshHero, foesFelled: [], name: hero.name });
+    setShowFoes(false);
     setIsDead(false);
     setIsRested(true);
   }
@@ -221,32 +231,38 @@ const App = () => {
   return (
     <div className="App">
       <div className="header">
-        {isNamed && <CharacterSheet creature={hero} />}
-        <p className="status-message">{statusMessage}</p>
-        {!isNamed && (
-          <form onSubmit={handleSubmitName} className="name-form">
-            <input
-              placeholder="Nameless Warrior"
-              onChange={handleChangeName}
-            />
-            <button className="button" disabled={hero.name.trim().length === 0}>
-              Submit
-            </button>
-          </form>
-        )}
-        {isDead && (
-          <div className="button-section">
-            <div className="button" onClick={handleResurrection}>
-              Rise Again
-            </div>
-          </div>
-        )}
-        {trading && (
+        {isNamed && <CharacterSheet creature={hero} showFoes={showFoes} />}
+        {isTrading ? (
           <MerchantInventory
             inventory={merchantInventory}
             hero={hero}
             handlePurchase={handlePurchase}
           />
+        ) : (
+          <StatusMessages messages={statusMessages} />
+        )}
+        {!isNamed && (
+          <form onSubmit={handleSubmitName} className="name-form">
+            <h2>What is your name?</h2>
+            <input placeholder="Nameless Warrior" onChange={handleChangeName} />
+            <button className="button" disabled={hero.name.trim().length === 0}>
+              Submit
+            </button>
+          </form>
+        )}
+        {isDead && !showFoes && hero.foesFelled?.length > 0 && (
+          <div className="button-section">
+            <div className="button" onClick={handleShowDeath}>
+              Show Felled Foes
+            </div>
+          </div>
+        )}
+        {isDead && showFoes && (
+          <div className="button-section">
+            <div className="button" onClick={handleResurrection}>
+              Rise Again
+            </div>
+          </div>
         )}
       </div>
       {inCombat && <CharacterSheet creature={foe} />}
@@ -255,7 +271,7 @@ const App = () => {
         inCombat={inCombat}
         isRested={isRested}
         named={isNamed}
-        trading={trading}
+        trading={isTrading}
         unseen={isUnseen}
         handleAttack={handleAttack}
         handleEmbark={handleEmbark}
@@ -263,7 +279,6 @@ const App = () => {
         handleTrade={handleTrade}
         handleSneak={handleSneak}
       />
-      {isDead && <FoesFelled foesFelled={hero.foesFelled} />}
     </div>
   );
 };

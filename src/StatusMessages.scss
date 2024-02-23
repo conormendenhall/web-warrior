@@ -1,0 +1,10 @@
+@import "./variables";
+
+.status-message {
+  font-size: $size-md;
+  padding: 0 1em;
+
+  &.dead {
+    padding-right: 50%;
+  }
+}

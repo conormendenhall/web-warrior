@@ -2,16 +2,15 @@ import { Foes } from "./foes";
 
 import "./FoesFelled.scss";
 
-export const FoesFelled = ({ foesFelled, hidden }) => {
+export const FoesFelled = ({ foesFelled, showFoes }) => {
   return (
-    <div className={`foes-felled${hidden ? " hidden" : ""}`}>
+    <div className={"foes-felled"}>
       Foes Felled: {foesFelled.length}
-      <div className="foes-list">
+      <div className={`foes-list${showFoes ? " show" : ""}`}>
         {Foes.map((foeType) => {
           const count = foesFelled.filter(
             (foe) => foe.name === foeType.name
           ).length;
-          if (count > 0) console.log(`${foeType.name}: ${count}`);
 
           return (
             count > 0 && (

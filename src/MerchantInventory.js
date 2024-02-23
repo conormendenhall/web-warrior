@@ -10,9 +10,7 @@ export const MerchantInventory = ({ inventory, hero, handlePurchase }) => {
       item.deflectDie && item.deflectDie < hero.deflectDie;
     const inferiorItem = inferiorArmor || inferiorDmg || inferiorDeflect;
     const disabled = hero.gold < item.price || inferiorItem;
-    const description = inferiorItem
-      ? "inferior item"
-      : ItemDescription(item);
+    const description = inferiorItem ? "inferior item" : ItemDescription(item);
 
     return (
       <div
@@ -34,5 +32,15 @@ export const MerchantInventory = ({ inventory, hero, handlePurchase }) => {
     );
   });
 
-  return <div className="merchant-inventory">{inventoryItems}</div>;
+  const message =
+    inventory.length > 0
+      ? "Hello, weary traveler. See anything you like?"
+      : "You've cleaned me out. I must head back to town to restock the caravan.";
+
+  return (
+    <>
+      <p className="status-message">{message}</p>
+      <div className="merchant-inventory">{inventoryItems}</div>
+    </>
+  );
 };

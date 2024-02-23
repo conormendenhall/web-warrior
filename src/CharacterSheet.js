@@ -4,7 +4,7 @@ import { FoesFelled } from "./FoesFelled";
 
 import "./CharacterSheet.scss";
 
-export const CharacterSheet = ({ creature }) => {
+export const CharacterSheet = ({ creature, showFoes }) => {
   return (
     <div className="character-sheet">
       <div className="character-header">
@@ -26,7 +26,10 @@ export const CharacterSheet = ({ creature }) => {
         <div className="status">
           {creature.gold >= 0 && <div>Gold: {creature.gold}</div>}
           {creature.foesFelled && (
-            <FoesFelled foesFelled={creature.foesFelled} hidden={true} />
+            <FoesFelled
+              foesFelled={creature.foesFelled}
+              showFoes={showFoes}
+            />
           )}
         </div>
       </div>
