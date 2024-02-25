@@ -29,12 +29,6 @@
 
     &.disabled {
       color: $color-disabled;
-
-      &:not(.inferior) {
-        .info .description {
-          visibility: hidden;
-        }
-      }
     }
 
     .info {

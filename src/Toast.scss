@@ -1,0 +1,38 @@
+@import "./variables";
+
+// @keyframes shake {
+//   0% {
+//     transform: translate(0px, 0);
+//   }
+//   25% {
+//     transform: translate(-5px, 0);
+//   }
+//   50% {
+//     transform: translate(0px, 0);
+//   }
+//   75% {
+//     transform: translate(5px, 0);
+//   }
+//   100% {
+//     transform: translate(0px, 0);
+//   }
+// }
+
+@keyframes grow {
+  0% {
+    width: 0vw;
+  }
+  100% {
+    width: 100vw;
+  }
+}
+
+.toast {
+  text-align: center;
+  margin: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: grow 0.5s;
+  color: $color-background;
+  background-color: $color-primary;
+}

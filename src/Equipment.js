@@ -9,13 +9,15 @@ export const Equipment = ({ equipment }) => {
         const description = ItemDescription(item);
 
         return (
-          <div
-            key={item.name}
-            className={"item" + (item.equipped ? " equipped" : "")}
-          >
-            <span>{item.name}</span>
-            <span className="description">{description}</span>
-          </div>
+          item.equipped && (
+            <div
+              key={item.name}
+              className={"item" + (item.equipped ? " equipped" : "")}
+            >
+              <span>{item.name}</span>
+              <span className="description">{description}</span>
+            </div>
+          )
         );
       })}
     </div>

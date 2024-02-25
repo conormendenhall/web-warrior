@@ -8,6 +8,7 @@ import { StatusMessages } from "./StatusMessages";
 import { CharacterSheet } from "./CharacterSheet";
 import { MerchantInventory } from "./MerchantInventory";
 import { ActionButtons } from "./ActionButtons";
+import { Toast } from "./Toast";
 
 import "./App.scss";
 
@@ -23,6 +24,7 @@ const App = () => {
   const [isDead, setIsDead] = useState(false);
   const [isUnseen, setIsUnseen] = useState(hero.isCloaked);
   const [showFoes, setShowFoes] = useState(false);
+  const [toast, setToast] = useState("");
 
   function addStatusMessage(message) {
     const prunedStatuses = [...statusMessages, message];
@@ -81,6 +83,10 @@ const App = () => {
     }
   }
 
+  function criticalHit() {
+    setToast("CRITICAL HIT!");
+  }
+
   function handleSubmitName(e) {
     e.preventDefault();
     setIsNamed(true);
@@ -123,15 +129,26 @@ const App = () => {
 
   function handleAttack() {
     setIsUnseen(false);
-    const heroAtkDmg = rollDie(hero.damageDie);
+    let heroAtkDmg = rollDie(hero.damageDie);
+    let message = `You strike the ${foe.name} for ${heroAtkDmg} damage.`;
+    let crit = false;
+
+    if (rollDie(5) === 1) {
+      criticalHit();
+      crit = true;
+      heroAtkDmg = hero.damageDie;
+      message = `Critical hit! You strike the ${foe.name} for ${heroAtkDmg} damage.`;
+    }
+
     const newFoeHP = foe.hp - heroAtkDmg;
     setFoe({ ...foe, hp: newFoeHP });
-    let message = `You strike the ${foe.name} for ${heroAtkDmg} damage.`;
 
     if (newFoeHP > 0) {
       foeAttack(message);
     } else {
-      let victoryMessage = `You strike the ${foe.name} for ${heroAtkDmg} damage, and it falls dead at your feet.`;
+      let victoryMessage =
+        `${crit ? "Critical hit! " : ""}` +
+        `You strike the ${foe.name} for ${heroAtkDmg} damage, and it falls dead at your feet.`;
       let newXP = hero.xp + foe.maxHP + foe.damageDie;
       let newLevelXP = hero.levelXP;
       let newMaxHP = hero.maxHP;
@@ -231,6 +248,15 @@ const App = () => {
   return (
     <div className="App">
       <div className="header">
+        {!isNamed && (
+          <form onSubmit={handleSubmitName} className="name-form">
+            <h2>What is your name?</h2>
+            <input placeholder="Nameless Warrior" onChange={handleChangeName} />
+            <button className="button" disabled={hero.name.trim().length === 0}>
+              Submit
+            </button>
+          </form>
+        )}
         {isNamed && <CharacterSheet creature={hero} showFoes={showFoes} />}
         {isTrading ? (
           <MerchantInventory
@@ -241,15 +267,7 @@ const App = () => {
         ) : (
           <StatusMessages messages={statusMessages} />
         )}
-        {!isNamed && (
-          <form onSubmit={handleSubmitName} className="name-form">
-            <h2>What is your name?</h2>
-            <input placeholder="Nameless Warrior" onChange={handleChangeName} />
-            <button className="button" disabled={hero.name.trim().length === 0}>
-              Submit
-            </button>
-          </form>
-        )}
+        <Toast toast={toast} setToast={setToast} />
         {isDead && !showFoes && hero.foesFelled?.length > 0 && (
           <div className="button-section">
             <div className="button" onClick={handleShowDeath}>

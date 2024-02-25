@@ -10,6 +10,6 @@ export const FreshHero = {
   deflectDie: 0,
   isCloaked: false,
   gold: 0,
-  equipment: [],
+  equipment: [{ name: "Short Sword", damageDie: 6, equipped: true }],
   foesFelled: [],
 };
