@@ -3,11 +3,13 @@ import "./ActionButtons.scss";
 export const ActionButtons = ({
   isDead,
   inCombat,
+  isTurn,
   isRested,
   named,
   trading,
   unseen,
   handleAttack,
+  handleEndTurn,
   handleEmbark,
   handleRest,
   handleTrade,
@@ -16,9 +18,12 @@ export const ActionButtons = ({
   let text;
   let handler;
 
-  if (inCombat) {
+  if (inCombat && isTurn) {
     text = "Attack";
     handler = handleAttack;
+  } else if (inCombat && !isTurn) {
+    text = "End Turn"
+    handler = handleEndTurn;
   } else if (isRested) {
     text = "Embark";
     handler = handleEmbark;

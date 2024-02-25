@@ -16,6 +16,7 @@ const App = () => {
   const [statusMessages, setStatusMessages] = useState([""]);
   const [isNamed, setIsNamed] = useState(false);
   const [inCombat, setInCombat] = useState(false);
+  const [isTurn, setIsTurn] = useState(true);
   const [isTrading, setIsTrading] = useState(false);
   const [merchantInventory, setMerchantInventory] = useState(FreshInventory);
   const [hero, setHero] = useState(FreshHero);
@@ -47,42 +48,6 @@ const App = () => {
     return randomFoe;
   }
 
-  function foeAttack(message) {
-    if (foe.hp < foe.maxHP) message += ` It still stands, sneering at you.`;
-
-    if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
-      message += ` The ${foe.name} attacks, but you deflect it with your shield.`;
-      addStatusMessage(message);
-    } else {
-      message += ` The ${foe.name} strikes.`;
-      let foeAtkDmg = rollDie(foe.damageDie);
-      let dmgReduction = 0;
-
-      if (hero.armorDie > 0) {
-        dmgReduction = rollDie(hero.armorDie);
-        foeAtkDmg = Math.max(foeAtkDmg - dmgReduction, 0);
-        message += ` Your armor negates ${dmgReduction} damage.`;
-      }
-      message += ` You take ${foeAtkDmg} damage.`;
-      addStatusMessage(message);
-
-      if (hero.hp - foeAtkDmg > 0) {
-        setHero({ ...hero, hp: hero.hp - foeAtkDmg });
-
-        if (hero.hp - foeAtkDmg < hero.maxHP) setIsRested(false);
-      } else {
-        setHero({ ...hero, hp: 0 });
-        setIsDead(true);
-        setInCombat(false);
-        message += ` You fall dead before the ${foe.name}.`;
-        const rip = `Rest in Peace, ${hero.name}`;
-        setStatusMessages([message, rip]);
-        setFoe(getRandomFoe(1));
-        setMerchantInventory(FreshInventory);
-      }
-    }
-  }
-
   function criticalHit() {
     setToast("CRITICAL HIT!");
   }
@@ -111,7 +76,7 @@ const App = () => {
       }
       message += ` It ambushes you!`;
       addStatusMessage(message);
-      foeAttack(message);
+      handleEndTurn();
 
       return;
     }
@@ -144,7 +109,9 @@ const App = () => {
     setFoe({ ...foe, hp: newFoeHP });
 
     if (newFoeHP > 0) {
-      foeAttack(message);
+      message += ` It still stands, sneering at you.`;
+      addStatusMessage(message);
+      setIsTurn(false);
     } else {
       let victoryMessage =
         `${crit ? "Critical hit! " : ""}` +
@@ -184,6 +151,43 @@ const App = () => {
 
       if (hero.isCloaked) setIsUnseen(true);
     }
+  }
+
+  function handleEndTurn() {
+    let message = "";
+
+    if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
+      message += ` The ${foe.name} attacks, but you deflect it with your shield.`;
+      addStatusMessage(message);
+    } else {
+      message += ` The ${foe.name} strikes.`;
+      let foeAtkDmg = rollDie(foe.damageDie);
+      let dmgReduction = 0;
+
+      if (hero.armorDie > 0) {
+        dmgReduction = rollDie(hero.armorDie);
+        foeAtkDmg = Math.max(foeAtkDmg - dmgReduction, 0);
+        message += ` Your armor negates ${dmgReduction} damage.`;
+      }
+      message += ` You take ${foeAtkDmg} damage.`;
+      addStatusMessage(message);
+
+      if (hero.hp - foeAtkDmg > 0) {
+        setHero({ ...hero, hp: hero.hp - foeAtkDmg });
+
+        if (hero.hp - foeAtkDmg < hero.maxHP) setIsRested(false);
+      } else {
+        setHero({ ...hero, hp: 0 });
+        setIsDead(true);
+        setInCombat(false);
+        message += ` You fall dead before the ${foe.name}.`;
+        const rip = `Rest in Peace, ${hero.name}`;
+        setStatusMessages([message, rip]);
+        setFoe(getRandomFoe(1));
+        setMerchantInventory(FreshInventory);
+      }
+    }
+    setIsTurn(true);
   }
 
   function handleTrade() {
@@ -287,11 +291,13 @@ const App = () => {
       <ActionButtons
         isDead={isDead}
         inCombat={inCombat}
+        isTurn={isTurn}
         isRested={isRested}
         named={isNamed}
         trading={isTrading}
         unseen={isUnseen}
         handleAttack={handleAttack}
+        handleEndTurn={handleEndTurn}
         handleEmbark={handleEmbark}
         handleRest={handleRest}
         handleTrade={handleTrade}
