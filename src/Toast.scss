@@ -9,12 +9,21 @@
   }
 }
 
+@keyframes fade {
+  0% {
+    opacity: 100%;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 .toast {
   text-align: center;
   margin: auto;
   white-space: nowrap;
   overflow: hidden;
-  animation: grow 0.5s;
+  animation: grow 0.2s ease-in, fade 1.5s ease-out 1.2s;
   color: $color-background;
   background-color: $color-primary;
 }

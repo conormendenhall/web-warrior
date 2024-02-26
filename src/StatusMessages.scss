@@ -1,7 +1,17 @@
 @import "./variables";
 
 .status-message {
-  font-size: $size-md;
+  font-size: $size-sm;
+  &:first-of-type {
+    margin-bottom: 0;
+  }
+  &:nth-of-type(2) {
+    margin-top: 0;
+  }
+  &:last-of-type {
+    margin-top: inherit;
+    font-size: $size-md;
+  }
   padding: 0 1em;
 
   &.dead {

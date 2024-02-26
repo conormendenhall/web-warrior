@@ -29,7 +29,7 @@ const App = () => {
 
   function addStatusMessage(message) {
     const prunedStatuses = [...statusMessages, message];
-    if (prunedStatuses.length > 2) prunedStatuses.shift();
+    if (prunedStatuses.length > 3) prunedStatuses.shift();
     setStatusMessages(prunedStatuses);
   }
 
@@ -160,16 +160,15 @@ const App = () => {
       message += ` The ${foe.name} attacks, but you deflect it with your shield.`;
       addStatusMessage(message);
     } else {
-      message += ` The ${foe.name} strikes.`;
       let foeAtkDmg = rollDie(foe.damageDie);
       let dmgReduction = 0;
 
       if (hero.armorDie > 0) {
         dmgReduction = rollDie(hero.armorDie);
         foeAtkDmg = Math.max(foeAtkDmg - dmgReduction, 0);
-        message += ` Your armor negates ${dmgReduction} damage.`;
+        message += ` The ${foe.name}'s strike deals you ${foeAtkDmg} damage. Your armor negated ${dmgReduction} damage.`;
       }
-      message += ` You take ${foeAtkDmg} damage.`;
+      message += ` The ${foe.name}'s strike deals you ${foeAtkDmg} damage.`;
       addStatusMessage(message);
 
       if (hero.hp - foeAtkDmg > 0) {
