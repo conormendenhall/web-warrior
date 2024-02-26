@@ -1,7 +1,7 @@
 import "./StatusMessages.scss";
 
 export const StatusMessages = ({ messages }) => {
-  return messages.map((message) => (
-    <p className={"status-message"}>{message}</p>
+  return messages.map((message, index) => (
+    <p className={"status-message"} key={index}>{message}</p>
   ));
 };
