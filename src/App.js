@@ -74,9 +74,9 @@ const App = () => {
 
         return;
       }
-      setIsTurn(false);
       message += ` It ambushes you!`;
       addStatusMessage(message);
+      setIsTurn(false);
 
       return;
     }
@@ -167,8 +167,9 @@ const App = () => {
         dmgReduction = rollDie(hero.armorDie);
         foeAtkDmg = Math.max(foeAtkDmg - dmgReduction, 0);
         message += ` The ${foe.name}'s strike deals you ${foeAtkDmg} damage. Your armor negated ${dmgReduction} damage.`;
+      } else {
+        message += ` The ${foe.name}'s strike deals you ${foeAtkDmg} damage.`;
       }
-      message += ` The ${foe.name}'s strike deals you ${foeAtkDmg} damage.`;
       addStatusMessage(message);
 
       if (hero.hp - foeAtkDmg > 0) {
