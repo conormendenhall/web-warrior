@@ -294,7 +294,7 @@ const App = () => {
             </div>
           </div>
         )}
-        {isDead && showFoes && (
+        {isDead && (showFoes || hero.foesFelled?.length === 0) && (
           <div className="button-section">
             <div className="button" onClick={handleResurrection}>
               Rise Again
