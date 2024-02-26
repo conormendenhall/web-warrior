@@ -132,6 +132,7 @@ const App = () => {
         newMaxHP = hero.maxHP + 3;
         newHP = newMaxHP;
         newLevel = hero.level + 1;
+        setToast("LEVEL UP!")
         victoryMessage += ` ${hero.name} reached level ${newLevel}!`;
         setIsRested(true);
       }
