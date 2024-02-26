@@ -74,9 +74,9 @@ const App = () => {
 
         return;
       }
+      setIsTurn(false);
       message += ` It ambushes you!`;
       addStatusMessage(message);
-      handleEndTurn();
 
       return;
     }
@@ -153,7 +153,7 @@ const App = () => {
     }
   }
 
-  function handleEndTurn() {
+  function handleDefend() {
     let message = "";
 
     if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
@@ -297,7 +297,7 @@ const App = () => {
         trading={isTrading}
         unseen={isUnseen}
         handleAttack={handleAttack}
-        handleEndTurn={handleEndTurn}
+        handleDefend={handleDefend}
         handleEmbark={handleEmbark}
         handleRest={handleRest}
         handleTrade={handleTrade}

@@ -9,7 +9,7 @@ export const ActionButtons = ({
   trading,
   unseen,
   handleAttack,
-  handleEndTurn,
+  handleDefend,
   handleEmbark,
   handleRest,
   handleTrade,
@@ -22,8 +22,8 @@ export const ActionButtons = ({
     text = "Attack";
     handler = handleAttack;
   } else if (inCombat && !isTurn) {
-    text = "End Turn"
-    handler = handleEndTurn;
+    text = "Defend";
+    handler = handleDefend;
   } else if (isRested) {
     text = "Embark";
     handler = handleEmbark;
