@@ -54,8 +54,10 @@ const App = () => {
 
   function handleSubmitName(e) {
     e.preventDefault();
+    const trimmedName = hero.name.trim();
+    setHero({ ...hero, name: trimmedName });
     setIsNamed(true);
-    addStatusMessage(`Well met, ${hero.name}.`);
+    addStatusMessage(`Well met, ${trimmedName}.`);
   }
 
   function handleChangeName(e) {
@@ -255,13 +257,18 @@ const App = () => {
     <div className="App">
       <div className="header">
         {!isNamed && (
-          <form onSubmit={handleSubmitName} className="name-form">
+          <form
+            onSubmit={handleSubmitName}
+            value={hero.name}
+            className="name-form"
+          >
             <h1>v{pkg.version}</h1>
             <h2>What is your name?</h2>
             <input
               placeholder="Nameless Warrior"
               onChange={handleChangeName}
               maxLength={18}
+              autoFocus={true}
             />
             <button className="button" disabled={hero.name.trim().length === 0}>
               Submit
