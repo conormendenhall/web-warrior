@@ -249,11 +249,14 @@ const App = () => {
     setIsRested(true);
   }
 
+  const pkg = require("../package.json");
+
   return (
     <div className="App">
       <div className="header">
         {!isNamed && (
           <form onSubmit={handleSubmitName} className="name-form">
+            <h1>v{pkg.version}</h1>
             <h2>What is your name?</h2>
             <input placeholder="Nameless Warrior" onChange={handleChangeName} />
             <button className="button" disabled={hero.name.trim().length === 0}>
