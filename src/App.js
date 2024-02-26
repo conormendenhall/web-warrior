@@ -258,7 +258,11 @@ const App = () => {
           <form onSubmit={handleSubmitName} className="name-form">
             <h1>v{pkg.version}</h1>
             <h2>What is your name?</h2>
-            <input placeholder="Nameless Warrior" onChange={handleChangeName} />
+            <input
+              placeholder="Nameless Warrior"
+              onChange={handleChangeName}
+              maxLength={18}
+            />
             <button className="button" disabled={hero.name.trim().length === 0}>
               Submit
             </button>
