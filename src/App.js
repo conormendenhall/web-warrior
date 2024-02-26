@@ -251,7 +251,7 @@ const App = () => {
     setIsRested(true);
   }
 
-  const pkg = require("../package.json");
+  const version = require("../package.json")?.version;
 
   return (
     <div className="App">
@@ -262,7 +262,7 @@ const App = () => {
             value={hero.name}
             className="name-form"
           >
-            <h1>v{pkg.version}</h1>
+            {version && <h1>v{version}</h1>}
             <h2>What is your name?</h2>
             <input
               placeholder="Nameless Warrior"
