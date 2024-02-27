@@ -1,4 +1,5 @@
 export const FreshHero = {
+  isHero: true,
   name: "Nameless Warrior",
   level: 1,
   xp: 0,

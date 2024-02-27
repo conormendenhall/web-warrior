@@ -18,7 +18,7 @@
     font-size: $size-xs;
 
     &:nth-child(even) {
-      background-color: $color-dark-opaque;
+      background-color: $color-background-opaque;
     }
 
     &:not(.disabled):hover {

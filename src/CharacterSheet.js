@@ -1,10 +1,11 @@
 import { Health } from "./Health";
 import { Equipment } from "./Equipment";
 import { FoesFelled } from "./FoesFelled";
+import { HeroStatus } from "./HeroStatus";
 
 import "./CharacterSheet.scss";
 
-export const CharacterSheet = ({ creature, showFoes }) => {
+export const CharacterSheet = ({ creature, heroStatus, showFoes }) => {
   return (
     <div className="character-sheet">
       <div className="character-header">
@@ -20,16 +21,16 @@ export const CharacterSheet = ({ creature, showFoes }) => {
       </div>
       <Health hp={creature.hp} maxHP={creature.maxHP} />
       <div className="character-body">
-        {creature.equipment?.length > 0 && (
-          <Equipment equipment={creature.equipment} />
-        )}
+        <div>
+          {creature.equipment?.length > 0 && (
+            <Equipment equipment={creature.equipment} />
+          )}
+          {creature.isHero && <HeroStatus heroStatus={heroStatus} />}
+        </div>
         <div className="status">
           {creature.gold >= 0 && <div>Gold: {creature.gold}</div>}
           {creature.foesFelled && (
-            <FoesFelled
-              foesFelled={creature.foesFelled}
-              showFoes={showFoes}
-            />
+            <FoesFelled foesFelled={creature.foesFelled} showFoes={showFoes} />
           )}
         </div>
       </div>

@@ -5,6 +5,7 @@ export const ActionButtons = ({
   inCombat,
   isTurn,
   isRested,
+  visitingShrine,
   named,
   trading,
   unseen,
@@ -12,6 +13,8 @@ export const ActionButtons = ({
   handleDefend,
   handleEmbark,
   handleRest,
+  handleAngel,
+  handleDemon,
   handleTrade,
   handleSneak,
 }) => {
@@ -34,17 +37,27 @@ export const ActionButtons = ({
 
   return (
     <div className="button-section">
-      {named && !isDead && (
+      {named && !isDead && !visitingShrine && (
         <div className="button" onClick={handler}>
           {text}
         </div>
       )}
-      {named && !isDead && !inCombat && !trading && (
+      {visitingShrine && (
+        <>
+          <div className="button" onClick={handleAngel}>
+            Touch the Angel
+          </div>
+          <div className="button" onClick={handleDemon}>
+            Touch the Demon
+          </div>
+        </>
+      )}
+      {named && !isDead && !inCombat && !trading && !visitingShrine && (
         <div className="button" onClick={handleTrade}>
           Trade
         </div>
       )}
-      {unseen && inCombat && (
+      {unseen && inCombat && !visitingShrine && (
         <div className="button" onClick={handleSneak}>
           Sneak Past
         </div>

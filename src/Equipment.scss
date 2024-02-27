@@ -11,7 +11,7 @@
     align-items: baseline;
 
     &:nth-child(odd) {
-      background-color: $color-dark-opaque;
+      background-color: $color-background-opaque;
     }
 
     &.equipped {

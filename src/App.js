@@ -22,10 +22,12 @@ const App = () => {
   const [hero, setHero] = useState(FreshHero);
   const [foe, setFoe] = useState(Foes[0]);
   const [isRested, setIsRested] = useState(true);
+  const [visitingShrine, setVisitingShrine] = useState(false);
   const [isDead, setIsDead] = useState(false);
   const [isUnseen, setIsUnseen] = useState(hero.isCloaked);
   const [showFoes, setShowFoes] = useState(false);
   const [toast, setToast] = useState("");
+  const [heroStatus, setHeroStatus] = useState({});
 
   function addStatusMessage(message) {
     const prunedStatuses = [...statusMessages, message];
@@ -72,17 +74,12 @@ const App = () => {
     if (rollDie(3) === 1) {
       if (hero.isCloaked) {
         message += ` It waits in ambush, but in your cloak you go unnoticed.`;
-        addStatusMessage(message);
-
-        return;
+      } else {
+        message += ` It ambushes you!`;
+        setIsTurn(false);
       }
-      message += ` It ambushes you!`;
-      addStatusMessage(message);
-      setIsTurn(false);
+    } else if (isUnseen) message += ` In your cloak you go unnoticed.`;
 
-      return;
-    }
-    if (isUnseen) message += ` In your cloak you go unnoticed.`;
     addStatusMessage(message);
   }
 
@@ -97,34 +94,37 @@ const App = () => {
   function handleAttack() {
     setIsUnseen(false);
     let heroAtkDmg = rollDie(hero.damageDie);
-    let message = `You strike the ${foe.name} for ${heroAtkDmg} damage.`;
-    let crit = false;
+    let message = "";
 
     if (rollDie(5) === 1) {
       criticalHit();
-      crit = true;
       heroAtkDmg = hero.damageDie;
-      message = `Critical hit! You strike the ${foe.name} for ${heroAtkDmg} damage.`;
+      message += "Critical hit! ";
     }
+
+    if (heroStatus.demonRounds > 0) {
+      heroAtkDmg *= 2;
+      message += "Demonic energy surges through you. ";
+      setHeroStatus({ ...heroStatus, demonRounds: heroStatus.demonRounds - 1 });
+    }
+    message += `You strike the ${foe.name} for ${heroAtkDmg} damage. `;
 
     const newFoeHP = foe.hp - heroAtkDmg;
     setFoe({ ...foe, hp: newFoeHP });
 
     if (newFoeHP > 0) {
-      message += ` It still stands, sneering at you.`;
+      message += `It still stands, sneering at you.`;
       addStatusMessage(message);
       setIsTurn(false);
     } else {
-      let victoryMessage =
-        `${crit ? "Critical hit! " : ""}` +
-        `You strike the ${foe.name} for ${heroAtkDmg} damage, and it falls dead at your feet.`;
+      message += "It falls dead at your feet. ";
       let newXP = hero.xp + foe.maxHP + foe.damageDie;
       let newLevelXP = hero.levelXP;
       let newMaxHP = hero.maxHP;
       let newHP = hero.hp;
       let newLevel = hero.level;
       const loot = rollDie(foe.maxHP + foe.damageDie);
-      victoryMessage += ` You loot it for ${loot} gold.`;
+      message += `You loot it for ${loot} gold.`;
 
       if (newXP >= hero.levelXP) {
         newXP -= hero.levelXP;
@@ -132,8 +132,8 @@ const App = () => {
         newMaxHP = hero.maxHP + 3;
         newHP = newMaxHP;
         newLevel = hero.level + 1;
-        setToast("LEVEL UP!")
-        victoryMessage += ` ${hero.name} reached level ${newLevel}!`;
+        setToast("LEVEL UP!");
+        message += ` ${hero.name} reached level ${newLevel}!`;
         setIsRested(true);
       }
       hero.foesFelled.push(foe);
@@ -148,11 +148,18 @@ const App = () => {
         level: newLevel,
         gold: hero.gold + loot,
       });
-      addStatusMessage(victoryMessage);
       setInCombat(false);
       setFoe(getRandomFoe(newLevel));
 
       if (hero.isCloaked) setIsUnseen(true);
+
+      if (hero.foesFelled.length % 5 === 0) {
+        setVisitingShrine(true);
+        message +=
+          " You stumble upon a moss-covered statue" +
+          " of an angel embracing a demon.";
+      }
+      addStatusMessage(message);
     }
   }
 
@@ -164,6 +171,15 @@ const App = () => {
       addStatusMessage(message);
     } else {
       let foeAtkDmg = rollDie(foe.damageDie);
+
+      if (heroStatus.angelRounds > 0) {
+        foeAtkDmg = Math.floor(foeAtkDmg / 2);
+        message += " A guardian angel protects you.";
+        setHeroStatus({
+          ...heroStatus,
+          angelRounds: heroStatus.angelRounds - 1,
+        });
+      }
       let dmgReduction = 0;
 
       if (hero.armorDie > 0) {
@@ -239,6 +255,18 @@ const App = () => {
     addStatusMessage(`You rest for ${restPoints} HP.`);
   }
 
+  function handleAngel() {
+    addStatusMessage("A feeling of peace washes over you.");
+    setVisitingShrine(false);
+    setHeroStatus({ ...heroStatus, angelRounds: 3 });
+  }
+
+  function handleDemon() {
+    addStatusMessage("A wicked smirk curls across your lips.");
+    setVisitingShrine(false);
+    setHeroStatus({ ...heroStatus, demonRounds: 3 });
+  }
+
   function handleShowDeath() {
     setShowFoes(true);
     setStatusMessages([]);
@@ -252,7 +280,7 @@ const App = () => {
     setIsRested(true);
   }
 
-  const version = require("../package.json")?.version;
+  const packageVersion = require("../package.json")?.version;
 
   return (
     <div className="App">
@@ -263,7 +291,7 @@ const App = () => {
             value={hero.name}
             className="name-form"
           >
-            {version && <h1>v{version}</h1>}
+            {packageVersion && <h1>v{packageVersion}</h1>}
             <h2>What is your name?</h2>
             <input
               placeholder="Nameless Warrior"
@@ -276,7 +304,13 @@ const App = () => {
             </button>
           </form>
         )}
-        {isNamed && <CharacterSheet creature={hero} showFoes={showFoes} />}
+        {isNamed && (
+          <CharacterSheet
+            creature={hero}
+            heroStatus={heroStatus}
+            showFoes={showFoes}
+          />
+        )}
         {isTrading ? (
           <MerchantInventory
             inventory={merchantInventory}
@@ -308,6 +342,7 @@ const App = () => {
         inCombat={inCombat}
         isTurn={isTurn}
         isRested={isRested}
+        visitingShrine={visitingShrine}
         named={isNamed}
         trading={isTrading}
         unseen={isUnseen}
@@ -315,6 +350,8 @@ const App = () => {
         handleDefend={handleDefend}
         handleEmbark={handleEmbark}
         handleRest={handleRest}
+        handleAngel={handleAngel}
+        handleDemon={handleDemon}
         handleTrade={handleTrade}
         handleSneak={handleSneak}
       />
