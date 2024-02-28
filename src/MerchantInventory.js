@@ -19,14 +19,16 @@ export const MerchantInventory = ({ inventory, hero, handlePurchase }) => {
     const inferiorItem = inferiorArmor || inferiorDmg || inferiorDeflect;
     const disabled = hero.gold < item.price || inferiorItem;
     const description = inferiorItem ? "inferior" : ItemDescription(item);
+    const onClick = () => {
+      if (disabled) return;
+      setMessage(item.message);
+      handlePurchase(item);
+    };
 
     return (
       <div
         key={item.name}
-        onClick={() => {
-          setMessage(item.message);
-          handlePurchase(item);
-        }}
+        onClick={onClick}
         role="button"
         className={"item" + (disabled ? " disabled" : "")}
       >
