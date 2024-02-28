@@ -185,7 +185,9 @@ const App = () => {
       if (hero.armorDie > 0) {
         dmgReduction = rollDie(hero.armorDie);
         foeAtkDmg = Math.max(foeAtkDmg - dmgReduction, 0);
-        message += ` The ${foe.name}'s strike deals you ${foeAtkDmg} damage. Your armor negated ${dmgReduction} damage.`;
+        message +=
+          ` The ${foe.name}'s strike deals you ${foeAtkDmg} damage.` +
+          ` Your armor negated ${dmgReduction} damage.`;
       } else {
         message += ` The ${foe.name}'s strike deals you ${foeAtkDmg} damage.`;
       }
@@ -323,16 +325,16 @@ const App = () => {
         <Toast toast={toast} setToast={setToast} />
         {isDead && !showFoes && hero.foesFelled?.length > 0 && (
           <div className="button-section">
-            <div className="button" onClick={handleShowDeath}>
+            <button className="button" onClick={handleShowDeath}>
               Show Felled Foes
-            </div>
+            </button>
           </div>
         )}
         {isDead && (showFoes || hero.foesFelled?.length === 0) && (
           <div className="button-section">
-            <div className="button" onClick={handleResurrection}>
+            <button className="button" onClick={handleResurrection}>
               Rise Again
-            </div>
+            </button>
           </div>
         )}
       </div>

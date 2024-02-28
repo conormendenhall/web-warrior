@@ -38,29 +38,29 @@ export const ActionButtons = ({
   return (
     <div className="button-section">
       {named && !isDead && !visitingShrine && (
-        <div className="button" onClick={handler}>
+        <button className="button" onClick={handler}>
           {text}
-        </div>
+        </button>
       )}
       {visitingShrine && (
         <>
-          <div className="button" onClick={handleAngel}>
+          <button className="button" onClick={handleAngel}>
             Touch the Angel
-          </div>
-          <div className="button" onClick={handleDemon}>
+          </button>
+          <button className="button" onClick={handleDemon}>
             Touch the Demon
-          </div>
+          </button>
         </>
       )}
       {named && !isDead && !inCombat && !trading && !visitingShrine && (
-        <div className="button" onClick={handleTrade}>
+        <button className="button" onClick={handleTrade}>
           Trade
-        </div>
+        </button>
       )}
       {unseen && inCombat && !visitingShrine && (
-        <div className="button" onClick={handleSneak}>
+        <button className="button" onClick={handleSneak}>
           Sneak Past
-        </div>
+        </button>
       )}
     </div>
   );
