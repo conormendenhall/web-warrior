@@ -30,6 +30,7 @@ export const MerchantInventory = ({ inventory, hero, handlePurchase }) => {
         key={item.name}
         onClick={onClick}
         role="button"
+        tabIndex="0"
         className={"item" + (disabled ? " disabled" : "")}
       >
         <span>{item.name}</span>
@@ -43,7 +44,7 @@ export const MerchantInventory = ({ inventory, hero, handlePurchase }) => {
 
   return (
     <>
-      <p className="status-message">{message}</p>
+      <p className="message">{message}</p>
       <div className="merchant-inventory">{inventoryItems}</div>
     </>
   );

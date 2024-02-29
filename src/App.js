@@ -4,35 +4,35 @@ import { Foes } from "./foes";
 import { FreshHero } from "./hero";
 import { FreshInventory } from "./items";
 
-import { StatusMessages } from "./StatusMessages";
+import { Messages } from "./Messages";
 import { CharacterSheet } from "./CharacterSheet";
 import { MerchantInventory } from "./MerchantInventory";
-import { ActionButtons } from "./ActionButtons";
 import { Toast } from "./Toast";
 
 import "./App.scss";
 
 const App = () => {
-  const [statusMessages, setStatusMessages] = useState([""]);
-  const [isNamed, setIsNamed] = useState(false);
-  const [inCombat, setInCombat] = useState(false);
-  const [isTurn, setIsTurn] = useState(true);
-  const [isTrading, setIsTrading] = useState(false);
-  const [merchantInventory, setMerchantInventory] = useState(FreshInventory);
   const [hero, setHero] = useState(FreshHero);
-  const [foe, setFoe] = useState(Foes[0]);
-  const [isRested, setIsRested] = useState(true);
-  const [visitingShrine, setVisitingShrine] = useState(false);
-  const [isDead, setIsDead] = useState(false);
-  const [isUnseen, setIsUnseen] = useState(hero.isCloaked);
-  const [showFoes, setShowFoes] = useState(false);
-  const [toast, setToast] = useState("");
   const [heroStatus, setHeroStatus] = useState({});
+  const [foe, setFoe] = useState(Foes[0]);
+  const [showFoes, setShowFoes] = useState(false);
+  const [merchantInventory, setMerchantInventory] = useState(FreshInventory);
+  const [messages, setMessages] = useState([""]);
+  const [toast, setToast] = useState("");
+  const [isNamed, setIsNamed] = useState(false);
+  const [isTrading, setIsTrading] = useState(false);
+  const [isRested, setIsRested] = useState(true);
+  const [isVisitingShrine, setIsVisitingShrine] = useState(false);
+  const [isComingFromShrine, setIsComingFromShrine] = useState(false);
+  const [isInCombat, setIsInCombat] = useState(false);
+  const [isTurn, setIsTurn] = useState(true);
+  const [isUnseen, setIsUnseen] = useState(hero.isCloaked);
+  const [isDead, setIsDead] = useState(false);
 
-  function addStatusMessage(message) {
-    const prunedStatuses = [...statusMessages, message];
-    if (prunedStatuses.length > 3) prunedStatuses.shift();
-    setStatusMessages(prunedStatuses);
+  function addMessage(message) {
+    const prunedMessages = [...messages, message];
+    if (prunedMessages.length > 3) prunedMessages.shift();
+    setMessages(prunedMessages);
   }
 
   function rollDie(sides) {
@@ -50,25 +50,8 @@ const App = () => {
     return randomFoe;
   }
 
-  function criticalHit() {
-    setToast("CRITICAL HIT!");
-  }
-
-  function handleSubmitName(e) {
-    e.preventDefault();
-    const trimmedName = hero.name.trim();
-    setHero({ ...hero, name: trimmedName });
-    setIsNamed(true);
-    addStatusMessage(`Well met, ${trimmedName}.`);
-  }
-
-  function handleChangeName(e) {
-    setHero({ ...hero, name: e.target.value });
-  }
-
-  function handleEmbark() {
-    setIsTrading(false);
-    setInCombat(true);
+  function combat() {
+    setIsInCombat(true);
     let message = `You encounter a ${foe.name}.`;
 
     if (rollDie(3) === 1) {
@@ -80,12 +63,40 @@ const App = () => {
       }
     } else if (isUnseen) message += ` In your cloak you go unnoticed.`;
 
-    addStatusMessage(message);
+    addMessage(message);
+  }
+
+  function handleSubmitName(e) {
+    e.preventDefault();
+    const trimmedName = hero.name.trim();
+    setHero({ ...hero, name: trimmedName });
+    setIsNamed(true);
+    addMessage(`Well met, ${trimmedName}.`);
+  }
+
+  function handleChangeName(e) {
+    setHero({ ...hero, name: e.target.value });
+  }
+
+  function handleEmbark() {
+    setIsTrading(false);
+    setIsComingFromShrine(false);
+
+    if (!isComingFromShrine && rollDie(3) === 1) {
+      setIsVisitingShrine(true);
+      setIsComingFromShrine(true);
+      addMessage(
+        " You stumble upon a moss-covered statue" +
+          " of an angel embracing a demon."
+      );
+      return;
+    }
+    combat();
   }
 
   const handleSneak = () => {
-    addStatusMessage(`You sneak past the ${foe.name}.`);
-    setInCombat(false);
+    addMessage(`You sneak past the ${foe.name}.`);
+    setIsInCombat(false);
     setFoe(getRandomFoe(hero.level));
 
     if (hero.hp < hero.maxHP) setIsRested(false);
@@ -97,7 +108,7 @@ const App = () => {
     let message = "";
 
     if (rollDie(5) === 1) {
-      criticalHit();
+      setToast("CRITICAL HIT!");
       heroAtkDmg = hero.damageDie;
       message += "Critical hit! ";
     }
@@ -114,7 +125,7 @@ const App = () => {
 
     if (newFoeHP > 0) {
       message += `It still stands, sneering at you.`;
-      addStatusMessage(message);
+      addMessage(message);
       setIsTurn(false);
     } else {
       message += "It falls dead at your feet. ";
@@ -148,18 +159,11 @@ const App = () => {
         level: newLevel,
         gold: hero.gold + loot,
       });
-      setInCombat(false);
+      setIsInCombat(false);
       setFoe(getRandomFoe(newLevel));
+      addMessage(message);
 
       if (hero.isCloaked) setIsUnseen(true);
-
-      if (hero.foesFelled.length % 5 === 0) {
-        setVisitingShrine(true);
-        message +=
-          " You stumble upon a moss-covered statue" +
-          " of an angel embracing a demon.";
-      }
-      addStatusMessage(message);
     }
   }
 
@@ -168,7 +172,7 @@ const App = () => {
 
     if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
       message += ` The ${foe.name} attacks, but you deflect it with your shield.`;
-      addStatusMessage(message);
+      addMessage(message);
     } else {
       let foeAtkDmg = rollDie(foe.damageDie);
 
@@ -191,7 +195,7 @@ const App = () => {
       } else {
         message += ` The ${foe.name}'s strike deals you ${foeAtkDmg} damage.`;
       }
-      addStatusMessage(message);
+      addMessage(message);
 
       if (hero.hp - foeAtkDmg > 0) {
         setHero({ ...hero, hp: hero.hp - foeAtkDmg });
@@ -200,10 +204,10 @@ const App = () => {
       } else {
         setHero({ ...hero, hp: 0 });
         setIsDead(true);
-        setInCombat(false);
+        setIsInCombat(false);
         message += ` You fall dead before the ${foe.name}.`;
         const rip = `Rest in Peace, ${hero.name}`;
-        setStatusMessages([message, rip]);
+        setMessages([message, rip]);
         setFoe(getRandomFoe(1));
         setMerchantInventory(FreshInventory);
       }
@@ -243,7 +247,7 @@ const App = () => {
       setMerchantInventory(
         merchantInventory.filter((item) => item.name !== selection.name)
       );
-      addStatusMessage(selection.message);
+      addMessage(selection.message);
     }
   }
 
@@ -254,28 +258,28 @@ const App = () => {
       hp: Math.min(hero.hp + restPoints, hero.maxHP),
     });
     setIsRested(true);
-    addStatusMessage(`You rest for ${restPoints} HP.`);
+    addMessage(`You rest for ${restPoints} HP.`);
   }
 
   function handleAngel() {
-    addStatusMessage("A feeling of peace washes over you.");
-    setVisitingShrine(false);
+    addMessage("A feeling of peace washes over you.");
+    setIsVisitingShrine(false);
     setHeroStatus({ ...heroStatus, angelRounds: 3 });
   }
 
   function handleDemon() {
-    addStatusMessage("A wicked smirk curls across your lips.");
-    setVisitingShrine(false);
+    addMessage("A wicked smirk curls across your lips.");
+    setIsVisitingShrine(false);
     setHeroStatus({ ...heroStatus, demonRounds: 3 });
   }
 
   function handleShowDeath() {
     setShowFoes(true);
-    setStatusMessages([]);
+    setMessages([]);
   }
 
   function handleResurrection() {
-    setStatusMessages(["Hello again, warrior."]);
+    setMessages(["Hello again, warrior."]);
     setHero({ ...FreshHero, foesFelled: [], name: hero.name });
     setShowFoes(false);
     setIsDead(false);
@@ -320,7 +324,7 @@ const App = () => {
             handlePurchase={handlePurchase}
           />
         ) : (
-          <StatusMessages messages={statusMessages} />
+          <Messages messages={messages} />
         )}
         <Toast toast={toast} setToast={setToast} />
         {isDead && !showFoes && hero.foesFelled?.length > 0 && (
@@ -338,25 +342,68 @@ const App = () => {
           </div>
         )}
       </div>
-      {inCombat && <CharacterSheet creature={foe} />}
-      <ActionButtons
-        isDead={isDead}
-        inCombat={inCombat}
-        isTurn={isTurn}
-        isRested={isRested}
-        visitingShrine={visitingShrine}
-        named={isNamed}
-        trading={isTrading}
-        unseen={isUnseen}
-        handleAttack={handleAttack}
-        handleDefend={handleDefend}
-        handleEmbark={handleEmbark}
-        handleRest={handleRest}
-        handleAngel={handleAngel}
-        handleDemon={handleDemon}
-        handleTrade={handleTrade}
-        handleSneak={handleSneak}
-      />
+      {isInCombat && (
+        <>
+          <CharacterSheet creature={foe} />
+          <div className="button-section">
+            {isTurn ? (
+              <button className="button" onClick={handleAttack}>
+                Attack
+              </button>
+            ) : (
+              <button className="button" onClick={handleDefend}>
+                Defend
+              </button>
+            )}
+            {isUnseen && (
+              <button className="button" onClick={handleSneak}>
+                Sneak Past
+              </button>
+            )}
+          </div>
+        </>
+      )}
+      {!isInCombat && (
+        <div className="button-section">
+          {isNamed &&
+            !isInCombat &&
+            !isDead &&
+            !isVisitingShrine &&
+            isRested && (
+              <button className="button" onClick={handleEmbark}>
+                Embark
+              </button>
+            )}
+          {isNamed &&
+            !isInCombat &&
+            !isDead &&
+            !isVisitingShrine &&
+            !isRested && (
+              <button className="button" onClick={handleRest}>
+                Rest
+              </button>
+            )}
+          {isVisitingShrine && (
+            <>
+              <button className="button" onClick={handleAngel}>
+                Touch the Angel
+              </button>
+              <button className="button" onClick={handleDemon}>
+                Touch the Demon
+              </button>
+            </>
+          )}
+          {isNamed &&
+            !isDead &&
+            !isInCombat &&
+            !isTrading &&
+            !isVisitingShrine && (
+              <button className="button" onClick={handleTrade}>
+                Trade
+              </button>
+            )}
+        </div>
+      )}
     </div>
   );
 };
