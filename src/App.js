@@ -10,6 +10,7 @@ import { MerchantInventory } from "./MerchantInventory";
 import { Toast } from "./Toast";
 
 import "./App.scss";
+import { Combat } from "./Combat";
 
 const App = () => {
   const [hero, setHero] = useState(FreshHero);
@@ -80,7 +81,6 @@ const App = () => {
 
   function handleEmbark() {
     setIsTrading(false);
-    setIsComingFromShrine(false);
 
     if (!isComingFromShrine && rollDie(3) === 1) {
       setIsVisitingShrine(true);
@@ -91,6 +91,7 @@ const App = () => {
       );
       return;
     }
+    setIsComingFromShrine(false);
     combat();
   }
 
@@ -98,8 +99,6 @@ const App = () => {
     addMessage(`You sneak past the ${foe.name}.`);
     setIsInCombat(false);
     setFoe(getRandomFoe(hero.level));
-
-    if (hero.hp < hero.maxHP) setIsRested(false);
   };
 
   function handleAttack() {
@@ -128,54 +127,68 @@ const App = () => {
       addMessage(message);
       setIsTurn(false);
     } else {
-      message += "It falls dead at your feet. ";
-      let newXP = hero.xp + foe.maxHP + foe.damageDie;
-      let newLevelXP = hero.levelXP;
-      let newMaxHP = hero.maxHP;
-      let newHP = hero.hp;
-      let newLevel = hero.level;
-      const loot = rollDie(foe.maxHP + foe.damageDie);
-      message += `You loot it for ${loot} gold.`;
-
-      if (newXP >= hero.levelXP) {
-        newXP -= hero.levelXP;
-        newLevelXP = hero.levelXP + Math.floor(hero.levelXP / 3);
-        newMaxHP = hero.maxHP + 3;
-        newHP = newMaxHP;
-        newLevel = hero.level + 1;
-        setToast("LEVEL UP!");
-        message += ` ${hero.name} reached level ${newLevel}!`;
-        setIsRested(true);
-      }
-      hero.foesFelled.push(foe);
-
-      setHero({
-        ...hero,
-        foesFelled: hero.foesFelled,
-        xp: newXP,
-        levelXP: newLevelXP,
-        maxHP: newMaxHP,
-        hp: newHP,
-        level: newLevel,
-        gold: hero.gold + loot,
-      });
-      setIsInCombat(false);
-      setFoe(getRandomFoe(newLevel));
-      addMessage(message);
-
-      if (hero.isCloaked) setIsUnseen(true);
+      defeatFoe(hero, foe, message);
     }
+  }
+
+  function defeatFoe(hero, foe, message) {
+    message += "It falls dead at your feet. ";
+    let newXP = hero.xp + foe.maxHP + foe.damageDie;
+    let newLevelXP = hero.levelXP;
+    let newMaxHP = hero.maxHP;
+    let newHP = hero.hp;
+    let newLevel = hero.level;
+    const loot = rollDie(foe.maxHP + foe.damageDie);
+    message += `You loot it for ${loot} gold.`;
+
+    if (newXP >= hero.levelXP) {
+      newXP -= hero.levelXP;
+      newLevelXP = hero.levelXP + Math.floor(hero.levelXP / 3);
+      newMaxHP = hero.maxHP + 3;
+      newHP = newMaxHP;
+      newLevel = hero.level + 1;
+      setToast("LEVEL UP!");
+      message += ` ${hero.name} reached level ${newLevel}!`;
+      setIsRested(true);
+    }
+    hero.foesFelled.push(foe);
+
+    setHero({
+      ...hero,
+      foesFelled: hero.foesFelled,
+      xp: newXP,
+      levelXP: newLevelXP,
+      maxHP: newMaxHP,
+      hp: newHP,
+      level: newLevel,
+      gold: hero.gold + loot,
+    });
+    setIsInCombat(false);
+    setFoe(getRandomFoe(newLevel));
+    addMessage(message);
+
+    if (hero.isCloaked) setIsUnseen(true);
   }
 
   function handleDefend() {
     let message = "";
+    let foeAtkDmg = rollDie(foe.damageDie);
 
-    if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
+    if (hero.reflectDie > 0 && rollDie(hero.reflectDie) === 1) {
+      message +=
+        ` The ${foe.name} attacks, ` +
+        `but ${foeAtkDmg} damage reflects off your shield back at it.`;
+      if (foe.hp - foeAtkDmg < 0) {
+        defeatFoe(hero, foe, message);
+
+        return;
+      }
+      setFoe({ ...foe, hp: foe.hp - foeAtkDmg });
+      addMessage(message);
+    } else if (hero.deflectDie > 0 && rollDie(hero.deflectDie) === 1) {
       message += ` The ${foe.name} attacks, but you deflect it with your shield.`;
       addMessage(message);
     } else {
-      let foeAtkDmg = rollDie(foe.damageDie);
-
       if (heroStatus.angelRounds > 0) {
         foeAtkDmg = Math.floor(foeAtkDmg / 2);
         message += " A guardian angel protects you.";
@@ -224,13 +237,15 @@ const App = () => {
       const newDmgDie = selection.damageDie ?? hero.damageDie;
       const newArmorDie = selection.armorDie ?? hero.armorDie;
       const newDeflectDie = selection.deflectDie ?? hero.deflectDie;
+      const newReflectDie = selection.reflectDie ?? hero.reflectDie;
       const newIsCloaked = selection.isCloaked ?? hero.isCloaked;
       selection.equipped = true;
       hero.equipment.forEach((item) => {
         if (
           (item.armorDie && selection.armorDie) ||
           (item.damageDie && selection.damageDie) ||
-          (item.deflectDie && selection.deflectDie)
+          (item.deflectDie && selection.deflectDie) ||
+          (item.reflectDie && selection.reflectDie)
         ) {
           item.equipped = false;
         }
@@ -241,6 +256,7 @@ const App = () => {
         damageDie: newDmgDie,
         armorDie: newArmorDie,
         deflectDie: newDeflectDie,
+        reflectDie: newReflectDie,
         isCloaked: newIsCloaked,
         equipment: [...hero.equipment, selection],
       });
@@ -291,7 +307,7 @@ const App = () => {
   return (
     <div className="App">
       <div className="header">
-        {!isNamed && (
+        {!isNamed ? (
           <form
             onSubmit={handleSubmitName}
             value={hero.name}
@@ -309,8 +325,7 @@ const App = () => {
               Submit
             </button>
           </form>
-        )}
-        {isNamed && (
+        ) : (
           <CharacterSheet
             creature={hero}
             heroStatus={heroStatus}
@@ -327,82 +342,62 @@ const App = () => {
           <Messages messages={messages} />
         )}
         <Toast toast={toast} setToast={setToast} />
-        {isDead && !showFoes && hero.foesFelled?.length > 0 && (
-          <div className="button-section">
-            <button className="button" onClick={handleShowDeath}>
-              Show Felled Foes
-            </button>
-          </div>
-        )}
-        {isDead && (showFoes || hero.foesFelled?.length === 0) && (
+        {isDead && (
           <div className="button-section">
             <button className="button" onClick={handleResurrection}>
               Rise Again
             </button>
+            {!showFoes && hero.foesFelled?.length > 0 && (
+              <button className="button" onClick={handleShowDeath}>
+                Show Felled Foes
+              </button>
+            )}
           </div>
         )}
       </div>
-      {isInCombat && (
+      {isInCombat ? (
+        <Combat
+          foe={foe}
+          isTurn={isTurn}
+          handleAttack={handleAttack}
+          handleDefend={handleDefend}
+          isUnseen={isUnseen}
+          handleSneak={handleSneak}
+        />
+      ) : (
         <>
-          <CharacterSheet creature={foe} />
-          <div className="button-section">
-            {isTurn ? (
-              <button className="button" onClick={handleAttack}>
-                Attack
-              </button>
-            ) : (
-              <button className="button" onClick={handleDefend}>
-                Defend
-              </button>
-            )}
-            {isUnseen && (
-              <button className="button" onClick={handleSneak}>
-                Sneak Past
-              </button>
-            )}
-          </div>
-        </>
-      )}
-      {!isInCombat && (
-        <div className="button-section">
-          {isNamed &&
-            !isInCombat &&
-            !isDead &&
-            !isVisitingShrine &&
-            isRested && (
-              <button className="button" onClick={handleEmbark}>
-                Embark
-              </button>
-            )}
-          {isNamed &&
-            !isInCombat &&
-            !isDead &&
-            !isVisitingShrine &&
-            !isRested && (
-              <button className="button" onClick={handleRest}>
-                Rest
-              </button>
-            )}
-          {isVisitingShrine && (
+          {isNamed && !isDead && (
             <>
-              <button className="button" onClick={handleAngel}>
-                Touch the Angel
-              </button>
-              <button className="button" onClick={handleDemon}>
-                Touch the Demon
-              </button>
+              {isVisitingShrine ? (
+                <div className="button-section">
+                  <button className="button" onClick={handleAngel}>
+                    Touch the Angel
+                  </button>
+                  <button className="button" onClick={handleDemon}>
+                    Touch the Demon
+                  </button>
+                </div>
+              ) : (
+                <div className="button-section">
+                  {isRested ? (
+                    <button className="button" onClick={handleEmbark}>
+                      Embark
+                    </button>
+                  ) : (
+                    <button className="button" onClick={handleRest}>
+                      Rest
+                    </button>
+                  )}
+                  {!isTrading && (
+                    <button className="button" onClick={handleTrade}>
+                      Trade
+                    </button>
+                  )}
+                </div>
+              )}
             </>
           )}
-          {isNamed &&
-            !isDead &&
-            !isInCombat &&
-            !isTrading &&
-            !isVisitingShrine && (
-              <button className="button" onClick={handleTrade}>
-                Trade
-              </button>
-            )}
-        </div>
+        </>
       )}
     </div>
   );

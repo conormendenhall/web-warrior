@@ -9,6 +9,7 @@ export const FreshHero = {
   damageDie: 6,
   armorDie: 0,
   deflectDie: 0,
+  reflectDie: 0,
   isCloaked: false,
   gold: 0,
   equipment: [{ name: "Short Sword", damageDie: 6, equipped: true }],

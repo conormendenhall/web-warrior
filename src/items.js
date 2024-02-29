@@ -53,6 +53,13 @@ export const FreshInventory = [
     isCloaked: true,
     message: "I wonder, what will you do when no one can see you?",
   },
+  {
+    name: "Mirrored Shield",
+    price: 200,
+    deflectDie: 6,
+    reflectDie: 3,
+    message: "Don't like what you see? No returns. Heh heh...",
+  },
 ];
 
 export function ItemDescription(item) {

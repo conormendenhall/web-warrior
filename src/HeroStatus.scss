@@ -2,15 +2,14 @@
 
 .hero-status {
   user-select: none;
+  color: $color-background;
+  background-color: $color-primary;
 
   .effect {
     padding: 0.125em 0.5em;
-    text-align: left;
-    color: $color-background;
-    background-color: $color-primary-opaque;
 
-    &:nth-child(odd) {
-      background-color: $color-primary;
+    &:nth-child(even) {
+      background-color: $color-primary-off;
     }
   }
 }
